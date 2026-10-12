@@ -3,6 +3,8 @@
 Reproduction package for the manuscript *"Bounded Price of Anarchy in
 Capacitated Facility Location Games with Congestion Feedback"* (Bei Cheng).
 
+**Repository:** <https://github.com/July-phenomenon/cflg-poa>
+
 The package contains everything needed to re-derive every number, table and
 figure in the paper **except** the raw competition inputs and the artefacts
 directly derived from them, which are not redistributed (see
