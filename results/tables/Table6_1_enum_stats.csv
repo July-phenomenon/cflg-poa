@@ -1,0 +1,11 @@
+﻿statistic,value
+n_configurations,15207
+mean_PoA,1.0398
+median_PoA,1.0336
+p95_PoA,1.107
+p99_PoA,1.2056
+max_PoA,1.4398
+min_PoA,0.9241
+pct_MILP_strictly_better,87.8
+pct_equal,3.5
+pct_Nash_strictly_better,8.71

@@ -1,0 +1,4 @@
+﻿layer,n,share_pct,mean_PoA,median_PoA,p95_PoA,p99_PoA,max_PoA,min_PoA,empirical_conditional_bound,violations,violation_rate
+all,15207,100.0,1.0398,1.0336,1.107,1.2056,1.4398,0.9241,1.2339,76,0.005
+coverage locked (dcov=0),1208,7.9,1.0092,1.0048,1.0308,1.0457,1.0584,0.9845,1.0576,1,0.0008
+coverage unlocked (dcov>0),13999,92.1,1.0424,1.0371,1.1095,1.2083,1.4398,0.9241,1.2409,61,0.0044

@@ -1,0 +1,4 @@
+﻿specification,budget_wan_per_station,nash_mode,n,mean_PoA,median_PoA,max_PoA,viol_1.667,viol_1.20,source_file
+"Legacy artifact (stale file, budget unspecified)",unspecified,classic (unlocked),21,1.1264,1.1092,1.7479,1,4,21城市精确MILP验证结果_单阶段版.bak
+Canonical single-stage,36.0,classic (unlocked),21,1.0394,1.0286,1.1604,0,0,21城市精确MILP验证结果_最终版.json
+Two-phase coverage-locked (paper specification),36.0,locked,21,1.0267,1.024,1.0663,0,0,21城市精确MILP验证结果_两阶段版.json

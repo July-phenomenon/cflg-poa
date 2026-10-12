@@ -1,0 +1,17 @@
+{
+  "n_cities": 21,
+  "PoA_mean": 1.0267,
+  "PoA_max": 1.0663,
+  "dF2_positive": 15,
+  "dF2_zero": 3,
+  "dF2_negative": 3,
+  "median_share_S1": 0.2164,
+  "median_share_S2": 0.4928,
+  "median_share_cov": 0.2792,
+  "mean_share_S1": 0.1557,
+  "mean_share_S2": 0.5742,
+  "mean_share_cov": 0.2605,
+  "max_abs_delta_cov": 0.01895,
+  "cities_with_repair": 0,
+  "identity_resid_max": 0.0
+}

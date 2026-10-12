@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.DS_Store
+Thumbs.db
+
+# Experiment outputs are regenerated locally; only the published reference
+# copies under results/figures and results/tables are tracked.
+results/main/*
+!results/main/.gitkeep
+results/logs/*
+!results/logs/.gitkeep
+
+# Never commit restricted inputs or derived artefacts
+data/raw/competition_spec/
+data/raw/han_et_al_2026_rasters/
+poa_full_per_config*.json
+delta_S2_*.json
+21城市*.json

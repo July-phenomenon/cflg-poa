@@ -1,0 +1,12 @@
+# Exact versions of the environment in which the shipped artefacts were last
+# verified to run (pip freeze of the relevant subset).  Use this if you need a
+# bit-comparable environment; the MILP backend is CBC, bundled with PuLP.
+#
+# host: Windows 10/11 x64, CPython 3.9.13
+matplotlib==3.9.4
+numpy==1.26.4
+pandas==2.3.3
+pulp==3.3.1
+scikit-learn==1.6.1
+scipy==1.13.1
+statsmodels==0.14.6
