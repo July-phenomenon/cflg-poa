@@ -9,6 +9,8 @@ Thumbs.db
 # copies under results/figures and results/tables are tracked.
 results/main/*
 !results/main/.gitkeep
+# Processed (publishable) result: one row per enumerated configuration.
+!results/main/enumeration_poa_results.csv
 results/logs/*
 !results/logs/.gitkeep
 

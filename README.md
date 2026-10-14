@@ -114,7 +114,17 @@ exp3 (subsidy)  ------>  tables 6, 9 ; figure 4
 | 21-city accessibility rasters | Han et al. (2026), Zenodo DOI `10.5281/zenodo.17010522` (public) | CC BY 4.0 |
 | Derived 21-city parameters | **included**, `data/processed/21city_parameters.json` | CC BY 4.0 |
 | Competition specification (station sizes, capacities, cost table, satisfaction ladders) | **not included** – available from the corresponding author on reasonable request | restricted |
-| Full enumeration output (15,207 configurations) | **not included** – regenerate with `code/03_experiments/exp2_enumeration.py` | restricted |
+| Raw enumeration output (full per-configuration JSON, 15,208 records incl. the degenerate all-zero one) | **not included** – regenerate with `code/03_experiments/exp2_enumeration.py` | restricted |
+| **Processed** enumeration results (PoA per configuration) | **included**, `results/main/enumeration_poa_results.csv` (15,207 rows: `config_id, PoA, F2_MILP, F2_Nash`) | CC BY 4.0 |
+
+The processed CSV contains only the two objectives and their ratio, so it can
+be redistributed freely; it is produced from the raw enumeration output by
+
+```bash
+python code/03_experiments/export_derived_results.py --src <enumeration JSON>
+```
+
+No competition input parameter appears in it.
 
 The parameters that come from the competition specification are nonetheless
 recorded verbatim in `code/utils/constants.py` (weights `W1/W2/W3`,
