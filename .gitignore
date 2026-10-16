@@ -10,7 +10,7 @@ Thumbs.db
 results/main/*
 !results/main/.gitkeep
 # Processed (publishable) result: one row per enumerated configuration.
-!results/main/enumeration_poa_results.csv
+!results/enumeration_poa_results.csv
 results/logs/*
 !results/logs/.gitkeep
 

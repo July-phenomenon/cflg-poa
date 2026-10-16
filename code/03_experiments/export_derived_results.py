@@ -15,7 +15,7 @@ Usage
 -----
     python code/03_experiments/export_derived_results.py \
         --src  <path to poa_full_per_config_s2.json> \
-        --dest results/main/enumeration_poa_results.csv
+        --dest results/enumeration_poa_results.csv
 
 If ``--src`` is omitted the script looks for the enumeration output in the
 usual locations and exits with a short instruction when it is absent (the
@@ -83,8 +83,7 @@ def main() -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--src", default=None,
                     help="enumeration output JSON (poa_full_per_config_s2.json)")
-    ap.add_argument("--dest", default=root("results", "main",
-                                           "enumeration_poa_results.csv"),
+    ap.add_argument("--dest", default=root("results", "enumeration_poa_results.csv"),
                     help="destination CSV path")
     args = ap.parse_args()
 

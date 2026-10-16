@@ -113,9 +113,17 @@ exp3 (subsidy)  ------>  tables 6, 9 ; figure 4
 |---|---|---|
 | 21-city accessibility rasters | Han et al. (2026), Zenodo DOI `10.5281/zenodo.17010522` (public) | CC BY 4.0 |
 | Derived 21-city parameters | **included**, `data/processed/21city_parameters.json` | CC BY 4.0 |
-| Competition specification (station sizes, capacities, cost table, satisfaction ladders) | **not included** – available from the corresponding author on reasonable request | restricted |
+| Competition specification (station sizes, capacities, cost table, satisfaction ladders; CSEE Cup National Undergraduate Mathematical Modeling Competition, 18th edition, 2026) | **not included** – its redistribution is restricted by the competition terms | restricted |
 | Raw enumeration output (full per-configuration JSON, 15,208 records incl. the degenerate all-zero one) | **not included** – regenerate with `code/03_experiments/exp2_enumeration.py` | restricted |
-| **Processed** enumeration results (PoA per configuration) | **included**, `results/main/enumeration_poa_results.csv` (15,207 rows: `config_id, PoA, F2_MILP, F2_Nash`) | CC BY 4.0 |
+| **Processed** enumeration results (PoA per configuration) | **included**, `results/enumeration_poa_results.csv` (15,207 rows: `config_id, PoA, F2_MILP, F2_Nash`) | CC BY 4.0 |
+
+Raw competition inputs (the problem statement and its attachments) and the
+artefacts directly derived from them are **not** redistributed here, because
+their redistribution is restricted by the competition terms; only the scripts
+that regenerate them are provided. Processed results that do not expose any
+competition input (configuration-level PoA values and aggregate statistics) are
+included in this package, and any further processed results are available from
+the corresponding author on reasonable request.
 
 The processed CSV contains only the two objectives and their ratio, so it can
 be redistributed freely; it is produced from the raw enumeration output by
