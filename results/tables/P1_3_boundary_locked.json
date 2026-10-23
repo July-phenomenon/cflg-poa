@@ -1,0 +1,81 @@
+{
+  "nash_mode": "locked",
+  "n": 21,
+  "warning_threshold_PoA": 1.05,
+  "threshold_note": "classic 版用 1.10；locked 版 PoA 分布上界仅 1.0663，沿用 1.10 会得到空集，故改为 1.05（= mean+2sd 附近的自然断点）",
+  "n_above_threshold": 8,
+  "cities_above_threshold": [
+    "Chongqing",
+    "Shanghai",
+    "Wuhan",
+    "Dalian",
+    "Beijing",
+    "Zhengzhou",
+    "Changsha",
+    "Chengdu"
+  ],
+  "features_above_threshold": {
+    "n_stations": 94.38,
+    "connectivity": 0.024625,
+    "capacity_gini": 0.192788,
+    "cluster_r": 3820.8
+  },
+  "top3_PoA": [
+    {
+      "city": "Chongqing",
+      "PoA": 1.0791,
+      "n_stations": 372,
+      "connectivity": 0.0219,
+      "capacity_gini": 0.1905,
+      "cluster_r": 4038.3
+    },
+    {
+      "city": "Shanghai",
+      "PoA": 1.0757,
+      "n_stations": 62,
+      "connectivity": 0.0303,
+      "capacity_gini": 0.1929,
+      "cluster_r": 3419.5
+    },
+    {
+      "city": "Wuhan",
+      "PoA": 1.0725,
+      "n_stations": 42,
+      "connectivity": 0.0321,
+      "capacity_gini": 0.1905,
+      "cluster_r": 3459.1
+    }
+  ],
+  "bottom3_PoA": [
+    {
+      "city": "Dongguan",
+      "PoA": 1.0,
+      "n_stations": 14,
+      "connectivity": 0.0162,
+      "capacity_gini": 0.2009,
+      "cluster_r": 4721.3
+    },
+    {
+      "city": "Kunming",
+      "PoA": 1.0,
+      "n_stations": 21,
+      "connectivity": 0.0093,
+      "capacity_gini": 0.1905,
+      "cluster_r": 6588.6
+    },
+    {
+      "city": "Shenzhen",
+      "PoA": 1.0,
+      "n_stations": 10,
+      "connectivity": 0.0185,
+      "capacity_gini": 0.2182,
+      "cluster_r": 4683.0
+    }
+  ],
+  "PoA_std": 0.027454,
+  "PoA_range": [
+    1.0,
+    1.0791
+  ],
+  "figure": "图D_警戒线_连通度×规模_locked.png"
+}

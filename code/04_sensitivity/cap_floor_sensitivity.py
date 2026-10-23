@@ -79,6 +79,12 @@ from instance_generator import (base_geometry, enumerate_configs,   # noqa: E402
                                 make_config)
 from core_solver import run_milp_exact, run_nash                    # noqa: E402
 
+# Phase-2 solver selection.  Read from the environment so that multiprocessing
+# children (Windows spawn re-imports this module) inherit the parent's choice.
+# Default off: the archived theta sweep used the fixed-point MILP.
+_EXACT = os.environ.get("CFLG_EXACT_PHASE2", "") == "1"
+_PHASE2_TL = float(os.environ.get("CFLG_PHASE2_TL", "0")) or None
+
 # The local full-enumeration archive (not shipped in the repo for compliance;
 # regenerate with exp2_enumeration.py if absent).  Used only by --control.
 DEFAULT_ARCHIVE = os.path.join(
@@ -100,6 +106,14 @@ def apply_theta(theta):
     assert abs(core_solver.BASELINE_S3 - theta) < 1e-12, "S3 baseline not applied"
     s_min = W1 * theta + W2 * theta + W3 * theta
     assert abs(s_min - theta) < 1e-12, "S_min != theta (weights changed?)"
+    # The exact Phase-2 solver snapshots S2_T / BASELINE_S3 at import time; the
+    # ``S2_T`` list is shared so ``s2_fn`` follows automatically, but the segment
+    # arrays and the scalar baseline must be re-read explicitly.
+    try:
+        from core_solver_exact import sync_stairs
+        sync_stairs()
+    except ImportError:
+        pass
     return dict(theta=theta,
                 S1_T=list(map(list, core_solver.S1_T)),
                 S2_T=list(map(list, core_solver.S2_T)),
@@ -126,7 +140,12 @@ def solve_one(tiers, geo, theta):
     n, pop, demand, S1m, caps = (inst["n"], inst["pop"], inst["demand"],
                                  inst["S1m"], inst["sta_caps"])
     nash_F2, nash_F1, _ = run_nash(n, pop, demand, S1m, caps)
-    milp_F2, milp_F1, _ = run_milp_exact(n, pop, demand, S1m, caps)
+    if _EXACT:
+        from core_solver_exact import run_two_phase_exact
+        milp_F2, milp_F1, _ = run_two_phase_exact(
+            n, pop, demand, S1m, caps, time_limit=_PHASE2_TL)
+    else:
+        milp_F2, milp_F1, _ = run_milp_exact(n, pop, demand, S1m, caps)
     if nash_F2 <= 0:
         return None
     return {
@@ -281,7 +300,22 @@ def main(argv=None):
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--workers", type=int, default=1)
     ap.add_argument("--archive", default=DEFAULT_ARCHIVE)
+    ap.add_argument("--exact-phase2", action="store_true",
+                    help="exact single-MILP Phase-2 (staircase 0-1 encoding); "
+                         "off by default to reproduce the archived sweep")
+    ap.add_argument("--phase2-time-limit", type=float, default=None)
     args = ap.parse_args(argv)
+
+    if args.exact_phase2:
+        os.environ["CFLG_EXACT_PHASE2"] = "1"
+    if args.phase2_time_limit:
+        os.environ["CFLG_PHASE2_TL"] = str(args.phase2_time_limit)
+
+    # the module-level flags were bound at import time; refresh them here for the
+    # single-process path (workers>1 re-import this module and read the env)
+    global _EXACT, _PHASE2_TL
+    _EXACT = os.environ.get("CFLG_EXACT_PHASE2", "") == "1"
+    _PHASE2_TL = float(os.environ.get("CFLG_PHASE2_TL", "0")) or None
 
     assert args.theta is not None, "--theta required"
     args.tag = args.tag or ("%.2f" % args.theta)

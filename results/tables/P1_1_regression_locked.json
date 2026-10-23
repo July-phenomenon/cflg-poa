@@ -1,0 +1,73 @@
+{
+  "nash_mode": "locked",
+  "n": 21,
+  "dependent": "PoA",
+  "regressors": [
+    "connectivity",
+    "capacity_gini",
+    "log_n_stations",
+    "cluster_r"
+  ],
+  "coefficients": [
+    {
+      "var": "const",
+      "coef": 0.869229,
+      "std_err": 0.201279,
+      "t": 4.319,
+      "p_value": 0.0005,
+      "ci_low": 0.442536,
+      "ci_high": 1.295923
+    },
+    {
+      "var": "connectivity",
+      "coef": 2.152289,
+      "std_err": 1.321471,
+      "t": 1.629,
+      "p_value": 0.1229,
+      "ci_low": -0.649105,
+      "ci_high": 4.953682
+    },
+    {
+      "var": "capacity_gini",
+      "coef": 0.127829,
+      "std_err": 0.781225,
+      "t": 0.164,
+      "p_value": 0.8721,
+      "ci_low": -1.528295,
+      "ci_high": 1.783953
+    },
+    {
+      "var": "log_n_stations",
+      "coef": 0.024579,
+      "std_err": 0.006797,
+      "t": 3.616,
+      "p_value": 0.0023,
+      "ci_low": 0.010169,
+      "ci_high": 0.038989
+    },
+    {
+      "var": "cluster_r",
+      "coef": 2e-06,
+      "std_err": 1e-05,
+      "t": 0.197,
+      "p_value": 0.8465,
+      "ci_low": -1.9e-05,
+      "ci_high": 2.3e-05
+    }
+  ],
+  "R2": 0.70247,
+  "AdjR2": 0.628087,
+  "f_pvalue": 0.000406530706346289,
+  "max_vif_predictors": 4.685154,
+  "max_vif_all_incl_const": 3035.0215,
+  "vif_note": "const 列 VIF≈3035 是未中心化伪影，无意义；预测变量最大 VIF = 4.685（与 classic 版相同）",
+  "corr_connectivity_PoA": 0.588158,
+  "corr_connectivity_gap": 0.668538,
+  "low_conn_mean_PoA": 1.02186,
+  "high_conn_mean_PoA": 1.05522,
+  "small_scale_mean_PoA": 1.00632,
+  "large_scale_mean_PoA": 1.06112,
+  "mean_PoA": 1.037619,
+  "max_PoA": 1.0791,
+  "min_PoA": 1.0
+}

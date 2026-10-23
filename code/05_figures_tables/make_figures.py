@@ -188,7 +188,7 @@ def fig1_poa21():
     ax.set_title("Sequential PoA across the 21 real cities", fontsize=11, pad=10)
 
     fig.tight_layout()
-    save(fig, "figure1")
+    save(fig, "fig1_poa21")
 
 
 # ---------------------------------------------------------------------------
@@ -230,7 +230,7 @@ def fig2_poa_dist():
     ax.set_title("Distribution of the sequential PoA", fontsize=11, pad=10)
 
     fig.tight_layout()
-    save(fig, "figure2")
+    save(fig, "fig2_poa_dist")
 
 
 # ---------------------------------------------------------------------------
@@ -362,11 +362,11 @@ def fig3_channel():
 
     # ---- Panel B: stacked median-share bars ----
     ax = axes[1]
-    labels_x = ["All locked\n($n = 1{,}208$)",
-                "Non-degenerate\n($n = 253$)",
+    labels_x = ["All locked\n($n = 4{,}317$)",
+                "Non-degenerate\n($n = 908$)",
                 "21 cities\n($n = 8$)"]
-    s1 = [1.00, 0.59, 0.00]
-    s2 = [0.00, 0.41, 0.99]
+    s1 = [1.00, 0.55, 0.00]
+    s2 = [0.00, 0.45, 0.99]
     x = np.arange(len(labels_x))
     w = 0.52
 
@@ -391,13 +391,13 @@ def fig3_channel():
                          violin_width=0.6, y_grid=y_grid, ylim=ylim_c)
     ax.axhline(1.0, color=COLORS["neutral"], lw=0.8, zorder=0)
     ax.set_xticks([0, 1])
-    ax.set_xticklabels(["Locked\n($n = 1{,}208$)", "Unlocked\n($n = 13{,}999$)"], fontsize=9)
+    ax.set_xticklabels(["Locked\n($n = 4{,}317$)", "Unlocked\n($n = 10{,}890$)"], fontsize=9)
     ax.set_ylabel("Measured PoA (≥)", fontsize=10)
     ax.set_ylim(ylim_c)
     ax.set_title("C. Layered Price of Anarchy", fontsize=11, pad=10)
 
     fig.tight_layout()
-    save(fig, "figure3")
+    save(fig, "fig3_channel")
 
 
 # ---------------------------------------------------------------------------
@@ -441,7 +441,7 @@ def fig4_subsidy():
     ax.set_title("Per-city PoA before and after the V2 subsidy", fontsize=11, pad=10)
 
     fig.tight_layout()
-    save(fig, "figure4")
+    save(fig, "fig4_subsidy")
 
 
 # ---------------------------------------------------------------------------
@@ -465,14 +465,14 @@ def ga():
              fontsize=13, fontweight="bold")
     fig.text(0.5, 0.920, "with Congestion Feedback", ha="center", va="top",
              fontsize=13, fontweight="bold")
-    fig.text(0.5, 0.895, "Censored satisfaction bounds the PoA; coverage drives the gap",
+    fig.text(0.5, 0.895, "Censored satisfaction bounds the PoA; assignment leads the gap",
              ha="center", va="top", fontsize=10, style="italic")
 
     # ---- Top panel: donut chart ----
     ax1 = fig.add_subplot(gs[0, 0])
     sectors = ["Coverage", "Assignment", "Congestion"]
     # Use absolute magnitudes for wedge sizes; congestion shown in negative color.
-    values = [81.9, 34.2, abs(-14.9)]
+    values = [44.8, 71.8, abs(-17.1)]
     colors = [COLORS["primary"], COLORS["light_fill"], COLORS["negative"]]
     wedges, texts = ax1.pie(values, colors=colors, startangle=90, counterclock=False,
                             wedgeprops=dict(width=0.4, edgecolor="white", linewidth=1.5))
@@ -504,10 +504,10 @@ def ga():
 
     # Bottom text
     fig.text(0.5, 0.055,
-             "21 cities (mean PoA ≥ 1.0267)   ·   15,207 configs (mean PoA ≥ 1.0398)",
+             "21 cities (mean PoA ≥ 1.0267)   ·   15,207 configs (mean PoA ≥ 1.0592)",
              ha="center", va="top", fontsize=10)
     fig.text(0.5, 0.020,
-             "Coverage channel: +81.9%  ·  Congestion channel: −14.9%",
+             "Assignment channel: +71.8%  ·  Coverage channel: +44.8%",
              ha="center", va="top", fontsize=11, fontweight="bold")
 
     fig.savefig(os.path.join(FIG, "GraphicalAbstract.pdf"), bbox_inches="tight")

@@ -1,0 +1,200 @@
+{
+  "nash_mode": "locked",
+  "n": 21,
+  "n_drops": 21,
+  "n_log_n_stations_significant": 21,
+  "n_model_F_significant": 21,
+  "log_n_stations_coef_min": 0.017533,
+  "log_n_stations_coef_max": 0.036281,
+  "per_city": [
+    {
+      "dropped": "Chongqing",
+      "n": 20,
+      "log_n_stations_coef": 0.036281,
+      "log_n_stations_p": 0.002671,
+      "log_n_stations_sig": true,
+      "model_f_p": 0.000632,
+      "model_f_sig": true
+    },
+    {
+      "dropped": "Shanghai",
+      "n": 20,
+      "log_n_stations_coef": 0.024296,
+      "log_n_stations_p": 0.003315,
+      "log_n_stations_sig": true,
+      "model_f_p": 0.001305,
+      "model_f_sig": true
+    },
+    {
+      "dropped": "Wuhan",
+      "n": 20,
+      "log_n_stations_coef": 0.025504,
+      "log_n_stations_p": 0.002309,
+      "log_n_stations_sig": true,
+      "model_f_p": 0.000974,
+      "model_f_sig": true
+    },
+    {
+      "dropped": "Dalian",
+      "n": 20,
+      "log_n_stations_coef": 0.025117,
+      "log_n_stations_p": 0.001294,
+      "log_n_stations_sig": true,
+      "model_f_p": 0.00025,
+      "model_f_sig": true
+    },
+    {
+      "dropped": "Beijing",
+      "n": 20,
+      "log_n_stations_coef": 0.024292,
+      "log_n_stations_p": 0.003842,
+      "log_n_stations_sig": true,
+      "model_f_p": 0.000991,
+      "model_f_sig": true
+    },
+    {
+      "dropped": "Zhengzhou",
+      "n": 20,
+      "log_n_stations_coef": 0.025664,
+      "log_n_stations_p": 0.001396,
+      "log_n_stations_sig": true,
+      "model_f_p": 0.00034,
+      "model_f_sig": true
+    },
+    {
+      "dropped": "Changsha",
+      "n": 20,
+      "log_n_stations_coef": 0.024577,
+      "log_n_stations_p": 0.00315,
+      "log_n_stations_sig": true,
+      "model_f_p": 0.000901,
+      "model_f_sig": true
+    },
+    {
+      "dropped": "Chengdu",
+      "n": 20,
+      "log_n_stations_coef": 0.024421,
+      "log_n_stations_p": 0.003481,
+      "log_n_stations_sig": true,
+      "model_f_p": 0.00076,
+      "model_f_sig": true
+    },
+    {
+      "dropped": "Tianjin",
+      "n": 20,
+      "log_n_stations_coef": 0.024508,
+      "log_n_stations_p": 0.003233,
+      "log_n_stations_sig": true,
+      "model_f_p": 0.000713,
+      "model_f_sig": true
+    },
+    {
+      "dropped": "Qingdao",
+      "n": 20,
+      "log_n_stations_coef": 0.025539,
+      "log_n_stations_p": 0.002398,
+      "log_n_stations_sig": true,
+      "model_f_p": 0.000541,
+      "model_f_sig": true
+    },
+    {
+      "dropped": "Hangzhou",
+      "n": 20,
+      "log_n_stations_coef": 0.02485,
+      "log_n_stations_p": 0.003077,
+      "log_n_stations_sig": true,
+      "model_f_p": 0.000676,
+      "model_f_sig": true
+    },
+    {
+      "dropped": "Harbin",
+      "n": 20,
+      "log_n_stations_coef": 0.023523,
+      "log_n_stations_p": 0.005793,
+      "log_n_stations_sig": true,
+      "model_f_p": 0.000637,
+      "model_f_sig": true
+    },
+    {
+      "dropped": "Nanjing",
+      "n": 20,
+      "log_n_stations_coef": 0.024356,
+      "log_n_stations_p": 0.002991,
+      "log_n_stations_sig": true,
+      "model_f_p": 0.000537,
+      "model_f_sig": true
+    },
+    {
+      "dropped": "Foshan",
+      "n": 20,
+      "log_n_stations_coef": 0.025284,
+      "log_n_stations_p": 0.001819,
+      "log_n_stations_sig": true,
+      "model_f_p": 0.000348,
+      "model_f_sig": true
+    },
+    {
+      "dropped": "Guangzhou",
+      "n": 20,
+      "log_n_stations_coef": 0.024097,
+      "log_n_stations_p": 0.003694,
+      "log_n_stations_sig": true,
+      "model_f_p": 0.000673,
+      "model_f_sig": true
+    },
+    {
+      "dropped": "Shenyang",
+      "n": 20,
+      "log_n_stations_coef": 0.023817,
+      "log_n_stations_p": 0.002216,
+      "log_n_stations_sig": true,
+      "model_f_p": 0.00035,
+      "model_f_sig": true
+    },
+    {
+      "dropped": "Jinan",
+      "n": 20,
+      "log_n_stations_coef": 0.024729,
+      "log_n_stations_p": 0.002456,
+      "log_n_stations_sig": true,
+      "model_f_p": 0.000756,
+      "model_f_sig": true
+    },
+    {
+      "dropped": "Xi'an",
+      "n": 20,
+      "log_n_stations_coef": 0.017533,
+      "log_n_stations_p": 0.013257,
+      "log_n_stations_sig": true,
+      "model_f_p": 6.9e-05,
+      "model_f_sig": true
+    },
+    {
+      "dropped": "Dongguan",
+      "n": 20,
+      "log_n_stations_coef": 0.024042,
+      "log_n_stations_p": 0.004982,
+      "log_n_stations_sig": true,
+      "model_f_p": 0.001432,
+      "model_f_sig": true
+    },
+    {
+      "dropped": "Kunming",
+      "n": 20,
+      "log_n_stations_coef": 0.024293,
+      "log_n_stations_p": 0.004604,
+      "log_n_stations_sig": true,
+      "model_f_p": 0.001463,
+      "model_f_sig": true
+    },
+    {
+      "dropped": "Shenzhen",
+      "n": 20,
+      "log_n_stations_coef": 0.025128,
+      "log_n_stations_p": 0.003073,
+      "log_n_stations_sig": true,
+      "model_f_p": 0.001379,
+      "model_f_sig": true
+    }
+  ]
+}

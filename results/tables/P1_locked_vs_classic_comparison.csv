@@ -1,0 +1,25 @@
+﻿metric,classic_old,locked_new,note
+nash_mode,classic,locked,口径
+mean_PoA,1.050329,1.037619,locked 更低（覆盖通道被消除）
+max_PoA,1.1604,1.0791,locked 更低
+min_PoA,1.0,1.0,locked 出现 <1（启发式伪影）
+PoA_std,0.035656,0.027454,locked 更集中
+beta_connectivity,1.749333,2.152289,P1-1 核心系数（classic 侧重算值）
+p_connectivity,0.570709,0.122903,显著性
+beta_capacity_gini,0.413465,0.127829,
+p_capacity_gini,0.819898,0.872075,
+beta_log_n_stations,0.005347,0.024579,locked 下变显著(p<0.05)
+p_log_n_stations,0.735345,0.00232,
+R2,0.077657,0.70247,locked 下解释力大幅提升
+AdjR2,-0.152929,0.628087,
+F_pvalue,0.849163,0.000407,locked 下整体模型显著
+max_vif_predictors,4.685154,4.685154,两口径相同（const 列 VIF 为未中心化伪影，不计）
+corr_connectivity_PoA,0.266018,0.588158,
+corr_connectivity_gap_UNIFIED,0.601425,0.668538,两侧均按统一口径 gap=milp−nash 重算，可直接比
+corr_connectivity_gap_ARCHIVED_CONVENTION,-0.600328,-0.667465,⚠ 旧约定：两侧都用文件自带 gap 字段(nash−milp)，与统一口径反号，仅留档不可混用
+low_conn_mean_PoA,1.02844,1.02186,
+high_conn_mean_PoA,1.0605,1.05522,
+small_scale_mean_PoA,1.04982,1.00632,
+large_scale_mean_PoA,1.0676,1.06112,
+corr_capacity_gini_PoA,-0.046132,-0.432298,
+corr_large_ratio_PoA,0.050719,0.429493,

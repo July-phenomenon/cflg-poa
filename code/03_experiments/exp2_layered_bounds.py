@@ -15,7 +15,18 @@ def main():
     OUT = os.path.join(DATA, "results", "main")
     W1, W2, W3, S3 = 0.2, 0.3, 0.5, 0.60
 
-    res = json.load(open(os.path.join(DATA, 'poa_full_per_config_s2.json'), encoding='utf-8'))['results']
+    # 2026-10 revision: read the exact single-MILP enumeration (the legacy
+    # <root>/poa_full_per_config_s2.json archive is no longer shipped, so this
+    # script previously could not run at all).  delta_S2_eff is reconstructed as
+    # the difference of the population-weighted S2 the exact run reports.
+    exact = os.path.join(OUT, "results_enumeration_exact.json")
+    if not os.path.exists(exact):
+        raise SystemExit(
+            "missing %s -- run code/03_experiments/exp2_enumeration_exact.py first"
+            % os.path.relpath(exact, DATA))
+    res = json.load(open(exact, encoding="utf-8"))["results"]
+    for r in res:
+        r["delta_S2_eff"] = r["milp_S2_weighted"] - r["nash_S2_weighted"]
 
     rows = [r for r in res if r.get('delta_S2_eff') is not None and r.get('PoA') is not None]
     poa = np.array([r['PoA'] for r in rows])

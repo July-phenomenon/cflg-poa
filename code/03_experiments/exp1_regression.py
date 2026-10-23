@@ -33,7 +33,13 @@ def main():
     os.makedirs(FIG, exist_ok=True)
 
     # ---------------------------------------------------------------- 输入校验
-    META = resolve_canonical('cities21_locked_s2')
+    # 2026-10 revision: the exact single-MILP benchmark supersedes the
+    # fixed-point one.  The default input is therefore the exact coverage-locked
+    # 21-city run; CFLG_INPUT_KEY=cities21_locked_s2 restores the archived
+    # fixed-point input (that file is not redistributed, so it is only usable on
+    # a machine that still has the pre-revision export).
+    _INKEY = os.environ.get("CFLG_INPUT_KEY", "cities21_exact_locked")
+    META = resolve_canonical(_INKEY)
     print('[input]', META['file'])
     print('[input] sha256 =', META['sha256'])
     print('[input] verified =', json.dumps(META['verified']['expected_fields'],
@@ -42,14 +48,11 @@ def main():
     data = json.load(open(META['path_absolute'], encoding='utf-8'))
     res = data['results']
 
-    # 对照用的 classic 版（黑名单文件，登记表内已声明 allow_legacy=True；
-    # 仅用于 classic-vs-locked 对比，不作主结果。
-    # 注意：该文件【没有】nash_mode 字段——它的缺失正是 classic 口径的证据）
-    META_CLASSIC = resolve_canonical('cities21_classic_legacy')
-    print('[legacy-compare]', META_CLASSIC['file'], META_CLASSIC['sha256'][:16],
-          '（allow_legacy=True，仅对比用）')
-    print('[legacy-compare] implied =',
-          json.dumps(META_CLASSIC['implied'], ensure_ascii=False))
+    # 对照用的 classic 版（同一批精确求解，仅 Nash 口径不同；作 classic-vs-locked
+    # 对比用，不作主结果）。旧版指向的"最终版"文件已不在工作区，改用精确重跑结果。
+    META_CLASSIC = resolve_canonical('cities21_exact_classic')
+    print('[classic-compare]', META_CLASSIC['file'], META_CLASSIC['sha256'][:16],
+          '（仅对比用）')
     res_cl = json.load(open(META_CLASSIC['path_absolute'], encoding='utf-8'))['results']
 
 
@@ -264,6 +267,38 @@ def main():
     json.dump(p1_3, open(p, 'w', encoding='utf-8'), indent=2, ensure_ascii=False)
     print('[out]', p)
 
+    # =============================================================== P1-4
+    # Leave-one-city-out refit: the manuscript claims log(n_sta) stays
+    # significant in 21/21 drops.  Previously that number had no shipped
+    # artefact; it is written here so the claim is reproducible.
+    loo = []
+    for city in df['city']:
+        dsub = df[df['city'] != city]
+        msub = sm.OLS(dsub['PoA'], sm.add_constant(dsub[XCOLS])).fit()
+        loo.append(dict(dropped=str(city), n=len(dsub),
+                        log_n_stations_coef=round(float(msub.params['log_n_stations']), 6),
+                        log_n_stations_p=round(float(msub.pvalues['log_n_stations']), 6),
+                        log_n_stations_sig=bool(msub.pvalues['log_n_stations'] < 0.05),
+                        model_f_p=round(float(msub.f_pvalue), 6),
+                        model_f_sig=bool(msub.f_pvalue < 0.05)))
+    p1_4 = dict(
+        nash_mode='locked', n=N, n_drops=len(loo),
+        n_log_n_stations_significant=sum(r['log_n_stations_sig'] for r in loo),
+        n_model_F_significant=sum(r['model_f_sig'] for r in loo),
+        log_n_stations_coef_min=min(r['log_n_stations_coef'] for r in loo),
+        log_n_stations_coef_max=max(r['log_n_stations_coef'] for r in loo),
+        per_city=loo,
+    )
+    p = os.path.join(OUT, 'P1_4_loo_locked.json')
+    json.dump(p1_4, open(p, 'w', encoding='utf-8'), indent=2, ensure_ascii=False)
+    print('\n=== P1-4 leave-one-city-out (locked) ===')
+    print('log(n_sta) significant in %d/%d drops; model F significant in %d/%d; '
+          'coef range %.4f..%.4f'
+          % (p1_4['n_log_n_stations_significant'], len(loo),
+             p1_4['n_model_F_significant'], len(loo),
+             p1_4['log_n_stations_coef_min'], p1_4['log_n_stations_coef_max']))
+    print('[out]', p)
+
     # =============================================================== 新旧对比
     # 不自信托管归档：classic 侧【就地重算】，再与归档 cross_check.json 对账。
     dcl = df_cl.copy()
@@ -275,14 +310,19 @@ def main():
     conn_gap_cl_filefield = float(np.corrcoef(dcl['connectivity'],
                                               dcl['gap_field_in_file'])[0, 1])
 
-    cross_cl = json.load(open(os.path.join(OUT, 'cross_check.json'), encoding='utf-8'))
-    recomputed = dict(beta_connectivity=float(m_cl.params['connectivity']),
-                      p_connectivity=float(m_cl.pvalues['connectivity']),
-                      R2=float(m_cl.rsquared))
-    agreement = {k: abs(recomputed[k] - cross_cl[k]) < 1e-6 for k in recomputed}
-    print('\n[对账] classic 侧重算 vs 归档 cross_check.json:', agreement)
-    if not all(agreement.values()):
-        print('  ⚠ 归档与重算不一致，以重算为准')
+    cross_path = os.path.join(OUT, 'cross_check.json')
+    if os.path.exists(cross_path):
+        cross_cl = json.load(open(cross_path, encoding='utf-8'))
+        recomputed = dict(beta_connectivity=float(m_cl.params['connectivity']),
+                          p_connectivity=float(m_cl.pvalues['connectivity']),
+                          R2=float(m_cl.rsquared))
+        agreement = {k: abs(recomputed[k] - cross_cl[k]) < 1e-6 for k in recomputed}
+        print('\n[对账] classic 侧重算 vs 归档 cross_check.json:', agreement)
+        if not all(agreement.values()):
+            print('  ⚠ 归档与重算不一致，以重算为准')
+    else:
+        print('\n[对账] cross_check.json 不在本包内（历史归档），跳过对照；'
+              'classic 侧重算值见下方 P1_locked_vs_classic_comparison.csv')
 
     cmp_rows = [
         ('nash_mode', 'classic', 'locked', '口径'),

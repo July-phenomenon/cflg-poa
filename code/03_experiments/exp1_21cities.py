@@ -18,8 +18,9 @@ import argparse
 
 def main():
     _AP = argparse.ArgumentParser(description='21城精确MILP vs 去中心化Nash（参数来自 v3 栅格推导）')
-    _AP.add_argument('--budget-per-station', type=float, default=12.0,
-                     help='建设预算系数（万元/站）。12=方案X(120万/10候选位置)；30=选项1(120万/约4已建站)')
+    _AP.add_argument('--budget-per-station', type=float, default=36.0,
+                     help='建设预算系数（万元/站）。36=论文口径（对应 floor(2/3) 大站 + 1/3 小站）；'
+                          '12=已废弃的“方案 X”系数，仅供复现 2026-10 之前的旧制品')
     _AP.add_argument('--output', type=str, default=None, help='输出 JSON 路径（默认覆盖标准结果文件）')
     _AP.add_argument('--exclude', type=str, default='',
                      help='逗号分隔的城市名，用于敏感性检验（例：Shenzhen）')
@@ -28,6 +29,19 @@ def main():
     _AP.add_argument('--nash-mode', type=str, choices=['classic', 'locked'], default='classic',
                      help='Nash 口径：classic=经典单阶段CFLG(可丢弃未覆盖小区，旧口径)；'
                           'locked=两阶段序贯(Phase1锁定覆盖集，Nash 不得丢弃，与定理1同设定)')
+    _AP.add_argument('--exact-phase2', action='store_true',
+                     help='用单次精确 MILP 求解 Phase 2（core_solver_exact）：去掉外层不动点迭代，'
+                          '给出全局最优。Phase 1 同时改用 HiGHS（CBC 在大 M 分段模型上会出现'
+                          '假不可行/次优解，见 core_solver_exact 文档）。默认关闭以保持旧结果可复现。')
+    _AP.add_argument('--phase2-time-limit', type=float, default=None,
+                     help='配合 --exact-phase2：每个城市的 Phase-2 MILP 时间上限（秒）。'
+                          '超时会返回当时最优可行解（状态记入输出），默认不设上限。')
+    _AP.add_argument('--no-resume', action='store_true',
+                     help='忽略已有 checkpoint，从头重算')
+    _AP.add_argument('--limit', type=int, default=None,
+                     help='只跑前 N 个城市（调试/验证用）')
+    _AP.add_argument('--cluster-factor', type=float, default=1.0,
+                     help='簇半径缩放因子（敏感性检验用；0.8/1.0/1.2，默认 1.0）')
     ARGS = _AP.parse_args()
     BUDGET_PER_STATION = ARGS.budget_per_station        # 万元/站
     EXCLUDE = set([c.strip() for c in ARGS.exclude.split(',') if c.strip()])
@@ -129,6 +143,19 @@ def main():
         """
         n_sta = len(sta_caps)
         total_pop = pop.sum()
+
+        # [P0-3] Optional exact Phase-2 (single MILP, no outer fixed point).
+        if ARGS.exact_phase2:
+            from core_solver_exact import run_two_phase_exact
+            e_F2, e_F1, e_cov, e_w, e_S2, e_info = run_two_phase_exact(
+                n, pop, demand, S1m, sta_caps, return_details=True,
+                time_limit=ARGS.phase2_time_limit, solver="highs", fallback="cbc")
+            if e_w is None:
+                return (0.0, 0.0, set(), None, None) if return_assignment else (0.0, 0.0, set())
+            run_milp_exact.last_info = e_info
+            if return_assignment:
+                return e_F2, e_F1, e_cov, e_w, e_S2
+            return e_F2, e_F1, e_cov
 
         # Phase 1: Maximize F1 (coverage)
         prob1 = pulp.LpProblem("Phase1", pulp.LpMaximize)
@@ -266,8 +293,63 @@ def main():
     all_gaps = []
 
     CITY_PROFILES = [p for p in CITY_PROFILES_ALL if p[0] not in EXCLUDE]
+    if ARGS.limit:
+        CITY_PROFILES = CITY_PROFILES[:ARGS.limit]
     print(f'[CFG] 预算系数 = {BUDGET_PER_STATION} 万元/站 | 城市数 = {len(CITY_PROFILES)} | 排除 = {sorted(EXCLUDE) or "无"}')
+
+    # --- checkpoint / resume -------------------------------------------------
+    # 逐城落盘；meta 记录一切会改变数值的口径参数，口径变了旧 checkpoint 自动作废
+    # （避免 12万/36万、classic/locked 这类口径混用再次发生）。
+    out_path = ARGS.output or os.environ.get("CFLG_COMPETITION_DIR", r"D:/competition_data")
+    CKPT_PATH = out_path + '.ckpt.json'
+    CKPT_META = {
+        'budget_per_station_wan': float(BUDGET_PER_STATION),
+        'nash_mode': ARGS.nash_mode,
+        'sizing_rule': ARGS.sizing_rule,
+        'exact_phase2': bool(ARGS.exact_phase2),
+        'phase2_time_limit': ARGS.phase2_time_limit,
+        'exclude': sorted(EXCLUDE),
+        'cluster_factor': float(ARGS.cluster_factor),
+        'script': 'exp1_21cities.py',
+    }
+
+    def _save_ckpt():
+        _d = os.path.dirname(CKPT_PATH)
+        if _d:
+            os.makedirs(_d, exist_ok=True)
+        _gap_map = {c: float(g) for c, g in zip(all_results.keys(), all_gaps)}
+        _tmp = CKPT_PATH + '.tmp'
+        with open(_tmp, 'w', encoding='utf-8') as _f:
+            json.dump({'meta': CKPT_META, 'cities': all_results, 'gaps': _gap_map},
+                      _f, ensure_ascii=False)
+        os.replace(_tmp, CKPT_PATH)          # 原子写
+
+    if not ARGS.no_resume and os.path.exists(CKPT_PATH):
+        try:
+            with open(CKPT_PATH, encoding='utf-8') as _f:
+                _ck = json.load(_f)
+            if _ck.get('meta') == CKPT_META:
+                _gm = _ck.get('gaps', {})
+                _cities = {k: v for k, v in _ck.get('cities', {}).items() if k in _gm}
+                if _cities:
+                    all_results = _cities
+                    all_gaps = [_gm[c] for c in _cities]
+                    print(f'[ckpt] 续跑：已有 {len(all_results)}/{len(CITY_PROFILES)} 个城市，跳过重算')
+            else:
+                print('[ckpt] 口径不一致，丢弃旧 checkpoint\n'
+                      f'        旧: {_ck.get("meta")}\n        新: {CKPT_META}')
+        except Exception as _e:
+            print(f'[ckpt] 读取失败（{_e}），从头开始')
+    elif ARGS.no_resume:
+        print('[ckpt] --no-resume：忽略已有 checkpoint')
+
     for city_name, n, cluster_r, n_sta in CITY_PROFILES:
+        if city_name in all_results:
+            print(f'{city_name}: [cached, skipped]')
+            continue
+        # 敏感性检验：整体缩放簇半径（几何尺度效应），默认 1.0 即论文口径
+        if ARGS.cluster_factor != 1.0:
+            cluster_r = cluster_r * ARGS.cluster_factor
         rng = np.random.RandomState(seed_for(city_name))
 
         extent = cluster_r * 3.0
@@ -319,7 +401,15 @@ def main():
         nash_ch = None
         if ARGS.nash_mode == 'locked':
             # 两阶段序贯：先解 Phase1 锁定覆盖集，再在其上跑去中心化博弈
-            _F1_phase1, lock_cov = milp_phase1_coverage(n, pop, demand, S1m, sta_caps)
+            if ARGS.exact_phase2:
+                # [P0-3] same HiGHS Phase-1 as the exact MILP side, so both
+                # allocations are compared under an identical coverage lock
+                from core_solver_exact import phase1_coverage as _phase1_hi
+                _m1, _F1_phase1 = _phase1_hi(n, pop, demand, S1m, sta_caps, solver="highs")
+                lock_cov = ({cj for cj in range(n) if _m1 is not None and _m1[:, cj].sum() > 0.5}
+                            if _m1 is not None else set())
+            else:
+                _F1_phase1, lock_cov = milp_phase1_coverage(n, pop, demand, S1m, sta_caps)
             nash_F2, nash_F1, nash_cov, n_rep, nash_choices, nash_S2_arr = run_nash_locked(
                 n, pop, demand, S1m, sta_caps, lock_cov, return_details=True)  # [V3]
             nash_ch = _channel_decomp(nash_choices, nash_S2_arr, pop, S1m)
@@ -371,11 +461,16 @@ def main():
             'PoA': round(milp_F2/nash_F2, 4) if nash_F2 > 0 else None,
             'Loss_pct': round((1 - nash_F2/milp_F2)*100, 1) if milp_F2 > 0 else None,
             'method': 'exact_MILP',  # Mark as exact MILP
+            'milp_status': (getattr(run_milp_exact, 'last_info', None) or {}).get('status')
+                           if ARGS.exact_phase2 else None,
             'nash_mode': ARGS.nash_mode,          # [T1] 记录口径，避免与旧单阶段结果混淆
             'n_repaired': n_rep,                  # [T1] locked 模式下的兜底修复次数（0=自然可行）
             **ch_fields,                          # [V3] 通道分解字段
         }
-        print(f"{city_name}: Nash F2={nash_F2:.4f}, MILP F2={milp_F2:.4f}, Gap={gap:+.4f}")
+        print(f"{city_name}: Nash F2={nash_F2:.4f}, MILP F2={milp_F2:.4f}, Gap={gap:+.4f}",
+              flush=True)
+        _save_ckpt()      # 逐城落盘：此后进程被杀也不丢这个城市
+        print(f"  [ckpt] {len(all_results)}/{len(CITY_PROFILES)} saved", flush=True)
 
     print("\n" + "=" * 70)
     print("SUMMARY")

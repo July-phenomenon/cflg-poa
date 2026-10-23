@@ -39,10 +39,63 @@ _AP.add_argument('--boost-factor', type=float, default=0.08,
 _AP.add_argument('--output', type=str,
                  default=os.environ.get("CFLG_COMPETITION_DIR", r"D:/competition_data"),
                  help='输出 JSON 路径')
+_AP.add_argument('--exact-phase2', action='store_true',
+                 help='用单 MILP 精确求解 Phase-2（阶梯 0-1 编码），默认关闭以保持旧结果可复现')
+_AP.add_argument('--phase2-time-limit', type=float, default=None,
+                 help='精确 Phase-2 的求解时限（秒）')
+_AP.add_argument('--limit', type=int, default=None,
+                 help='只跑前 N 个城市（调试/验证用）')
+_AP.add_argument('--no-resume', action='store_true',
+                 help='忽略已有 checkpoint，从头重算')
 ARGS = _AP.parse_args()
 BUDGET_PER_STATION = ARGS.budget_per_station
 S3_BOOST_FACTOR = ARGS.boost_factor
 CAPACITY = np.array([0, 1000., 2000., 3000.])
+
+# --- checkpoint / resume -----------------------------------------------------
+# 每个城市算完立刻落盘，中断后重跑自动跳过已完成城市。
+# meta 里记下所有会改变数值的口径参数：一旦口径变了，旧 checkpoint 自动作废，
+# 避免把不同规格的结果混在一起（12万/36万 那次事故就是口径混用）。
+CKPT_PATH = ARGS.output + '.ckpt.json'
+CKPT_META = {
+    'budget_per_station_wan': float(BUDGET_PER_STATION),
+    's3_boost_factor': float(S3_BOOST_FACTOR),
+    'exact_phase2': bool(ARGS.exact_phase2),
+    'phase2_time_limit': ARGS.phase2_time_limit,
+    'script': 'exp3_subsidy.py',
+}
+
+
+def load_checkpoint(path, meta):
+    """读 checkpoint；meta 不匹配或不完整则丢弃（返回空）。"""
+    if not os.path.exists(path):
+        return {}, {}
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            d = json.load(f)
+    except Exception as e:                                   # 损坏就当没有
+        print(f"[ckpt] 无法读取 {path}（{e}），从头开始")
+        return {}, {}
+    if d.get('meta') != meta:
+        print(f"[ckpt] 口径不一致，丢弃旧 checkpoint\n"
+              f"        旧: {d.get('meta')}\n        新: {meta}")
+        return {}, {}
+    cities = d.get('cities', {})
+    raw = d.get('raw', {})
+    cities = {k: v for k, v in cities.items() if k in raw}   # 只保留成对完整的
+    return cities, {k: raw[k] for k in cities}
+
+
+def save_checkpoint(path, meta, cities, raw):
+    """原子写（先写 .tmp 再 replace），中断不会留下半截 JSON。"""
+    _d = os.path.dirname(path)
+    if _d:
+        os.makedirs(_d, exist_ok=True)
+    tmp = path + '.tmp'
+    with open(tmp, 'w', encoding='utf-8') as f:
+        json.dump({'meta': meta, 'cities': cities, 'raw': raw},
+                  f, ensure_ascii=False)
+    os.replace(tmp, path)
 
 PARAMS_V3 = os.path.normpath(os.path.join(
     os.path.dirname(os.path.abspath(__file__)), '..', '..',
@@ -60,6 +113,8 @@ def load_city_profiles(json_path):
     return profiles
 
 CITY_PROFILES = load_city_profiles(PARAMS_V3)
+if ARGS.limit:
+    CITY_PROFILES = CITY_PROFILES[:ARGS.limit]
 
 
 def capacity_gini(nl, nm, ns):
@@ -82,7 +137,39 @@ nash_base_f2, nash_sub_f2, milp_f2_all = [], [], []
 milp_wins_base = milp_wins_sub = 0
 nash_wins_base = nash_wins_sub = 0
 
+# 恢复已完成的城市，并从原始（未 round）数值重建全部累加器，
+# 保证"续跑"与"一口气跑完"产出完全一致的结果。
+if ARGS.no_resume:
+    _ck_cities, _ck_raw = {}, {}
+    print("[ckpt] --no-resume：忽略已有 checkpoint，从头重算")
+else:
+    _ck_cities, _ck_raw = load_checkpoint(CKPT_PATH, CKPT_META)
+for _cname, _raw in _ck_raw.items():
+    all_results[_cname] = _ck_cities[_cname]
+    _b, _s = _raw['base_F2'], _raw['sub_F2']
+    _m, _mb = _raw['milp_F2'], _raw['milp_F2_boosted']
+    if _b > 1e-9:
+        base_poas.append(_m / _b)
+        if _m - _b > 0.001:
+            milp_wins_base += 1
+        elif _m - _b < -0.001:
+            nash_wins_base += 1
+    if _s > 1e-9 and _mb > 0:
+        sub_poas.append(_mb / _s)
+        if _mb - _s > 0.001:
+            milp_wins_sub += 1
+        elif _mb - _s < -0.001:
+            nash_wins_sub += 1
+    nash_base_f2.append(_b)
+    nash_sub_f2.append(_s)
+    milp_f2_all.append(_m)
+if all_results:
+    print(f"[ckpt] 续跑：已有 {len(all_results)}/{len(CITY_PROFILES)} 个城市，跳过重算")
+
 for city_name, n, cluster_r, n_sta in CITY_PROFILES:
+    if city_name in all_results:
+        print(f"{city_name}: [cached, skipped]")
+        continue
     rng = np.random.RandomState(seed_for(city_name))
     extent = cluster_r * 3.0
     comm_locs = rng.uniform(-extent / 2, extent / 2, size=(n, 2))
@@ -123,7 +210,12 @@ for city_name, n, cluster_r, n_sta in CITY_PROFILES:
     demand = np.round(raw_demand / raw_demand.sum() * target_total_demand).astype(np.int64)
 
     # 系统最优（集中式 MILP，不补贴——规划者解）
-    milp_F2, milp_F1, _ = run_milp_exact(n, pop, demand, S1m, sta_caps)
+    if ARGS.exact_phase2:
+        from core_solver_exact import run_two_phase_exact
+        milp_F2, milp_F1, _ = run_two_phase_exact(
+            n, pop, demand, S1m, sta_caps, time_limit=ARGS.phase2_time_limit)
+    else:
+        milp_F2, milp_F1, _ = run_milp_exact(n, pop, demand, S1m, sta_caps)
 
     # 基线 Nash（S3=0.60）
     base_F2, base_F1, base_cov, base_choices = run_nash_with_s3(
@@ -146,8 +238,14 @@ for city_name, n, cluster_r, n_sta in CITY_PROFILES:
         n, pop, demand, S1m, sta_caps, s3_array=s3_array, return_choices=True)
 
     # 口径一致：补贴机制下的集中式最优（同一 boosted S3），用于公平比较
-    milp_F2_boosted, _, _ = run_milp_exact_with_s3(
-        n, pop, demand, S1m, sta_caps, s3_array=s3_array)
+    if ARGS.exact_phase2:
+        from core_solver_exact import run_two_phase_exact
+        milp_F2_boosted, _, _ = run_two_phase_exact(
+            n, pop, demand, S1m, sta_caps, s3=s3_array,
+            time_limit=ARGS.phase2_time_limit)
+    else:
+        milp_F2_boosted, _, _ = run_milp_exact_with_s3(
+            n, pop, demand, S1m, sta_caps, s3_array=s3_array)
 
     poa_base = milp_F2 / base_F2 if base_F2 > 1e-9 else None
     # 方法1：未补贴 MILP 作分母（混合机制，可能出现 <1）
@@ -194,7 +292,15 @@ for city_name, n, cluster_r, n_sta in CITY_PROFILES:
     print(f"{city_name}: Nash_base={base_F2:.4f} Nash_sub={sub_F2:.4f} "
           f"MILP={milp_F2:.4f} MILP_boosted={milp_F2_boosted:.4f} | "
           f"PoA_base={poa_base:.4f} PoA_sub_consistent={poa_sub_consistent:.4f} "
-          f"(boost_mean={np.mean(s3_boost):.3f})")
+          f"(boost_mean={np.mean(s3_boost):.3f})", flush=True)
+
+    # 逐城落盘：这一行之后即使进程被杀，该城市也不必重算
+    _ck_raw[city_name] = {
+        'base_F2': float(base_F2), 'sub_F2': float(sub_F2),
+        'milp_F2': float(milp_F2), 'milp_F2_boosted': float(milp_F2_boosted),
+    }
+    save_checkpoint(CKPT_PATH, CKPT_META, all_results, _ck_raw)
+    print(f"  [ckpt] {len(all_results)}/{len(CITY_PROFILES)} saved", flush=True)
 
 print("\n" + "=" * 70)
 print("SUMMARY (T4)")

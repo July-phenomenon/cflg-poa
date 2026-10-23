@@ -1,0 +1,271 @@
+{
+  "n": 21,
+  "dependent": "PoA",
+  "regressors": [
+    "connectivity",
+    "capacity_gini",
+    "log_n_stations",
+    "cluster_r"
+  ],
+  "spec": "locked",
+  "raw_ols": {
+    "R2": 0.5161824174442466,
+    "AdjR2": 0.39522802180530836,
+    "f_pvalue": 0.015400143535687168,
+    "coef": {
+      "const": 0.9512054567983733,
+      "connectivity": 1.3395516538951224,
+      "capacity_gini": -0.09383354307845225,
+      "log_n_stations": 0.018272094919744335,
+      "cluster_r": -2.6925671135790286e-07
+    },
+    "std_err": {
+      "const": 0.22804417532923157,
+      "connectivity": 1.4971908612642015,
+      "capacity_gini": 0.8851073000953287,
+      "log_n_stations": 0.007701370616544743,
+      "cluster_r": 1.1438387830357101e-05
+    },
+    "p_value": {
+      "const": 0.0007207115984248078,
+      "connectivity": 0.38420422143655153,
+      "capacity_gini": 0.9168892261387213,
+      "log_n_stations": 0.030538805623174053,
+      "cluster_r": 0.981510817302092
+    },
+    "ci_low": {
+      "const": 0.46777340106145,
+      "connectivity": -1.8343511868441278,
+      "capacity_gini": -1.970177198929741,
+      "log_n_stations": 0.0019459185384661515,
+      "cluster_r": -2.4517555687477043e-05
+    },
+    "ci_high": {
+      "const": 1.4346375125352966,
+      "connectivity": 4.513454494634373,
+      "capacity_gini": 1.7825101127728364,
+      "log_n_stations": 0.03459827130102252,
+      "cluster_r": 2.3979042264761236e-05
+    }
+  },
+  "standardized_beta": {
+    "connectivity": 0.33437830380517847,
+    "capacity_gini": -0.02384045968451295,
+    "log_n_stations": 0.5332099393272103,
+    "cluster_r": -0.00886021951920183
+  },
+  "vif_all": {
+    "const": 3035.0215244806177,
+    "connectivity": 4.619020839084221,
+    "capacity_gini": 1.6724117132444356,
+    "log_n_stations": 1.6702988039832964,
+    "cluster_r": 4.685153893897276
+  },
+  "vif_predictors": {
+    "connectivity": 4.619020839084221,
+    "capacity_gini": 1.6724117132444356,
+    "log_n_stations": 1.6702988039832964,
+    "cluster_r": 4.685153893897276
+  },
+  "max_vif_predictors": 4.685154,
+  "loo": {
+    "n_cities": 21,
+    "n_log_n_stations_significant": 18,
+    "n_model_F_significant": 20,
+    "log_n_stations_coef_min": 0.012774,
+    "log_n_stations_coef_max": 0.020926,
+    "log_n_stations_p_min": 0.013879,
+    "log_n_stations_p_max": 0.13,
+    "per_city": [
+      {
+        "dropped": "Chongqing",
+        "n": 20,
+        "log_n_stations_coef": 0.020926173029082007,
+        "log_n_stations_p": 0.1084833227456457,
+        "log_n_stations_sig": false,
+        "model_f_p": 0.05461976878396709,
+        "model_f_sig": false
+      },
+      {
+        "dropped": "Dalian",
+        "n": 20,
+        "log_n_stations_coef": 0.019011726340158686,
+        "log_n_stations_p": 0.013878508653021987,
+        "log_n_stations_sig": true,
+        "model_f_p": 0.006598813197131207,
+        "model_f_sig": true
+      },
+      {
+        "dropped": "Zhengzhou",
+        "n": 20,
+        "log_n_stations_coef": 0.019636635640873423,
+        "log_n_stations_p": 0.016816007398416075,
+        "log_n_stations_sig": true,
+        "model_f_p": 0.011071220285655924,
+        "model_f_sig": true
+      },
+      {
+        "dropped": "Wuhan",
+        "n": 20,
+        "log_n_stations_coef": 0.019381987555881552,
+        "log_n_stations_p": 0.026333485657258335,
+        "log_n_stations_sig": true,
+        "model_f_p": 0.026746218023299795,
+        "model_f_sig": true
+      },
+      {
+        "dropped": "Beijing",
+        "n": 20,
+        "log_n_stations_coef": 0.01773186038501967,
+        "log_n_stations_p": 0.04331951288958917,
+        "log_n_stations_sig": true,
+        "model_f_p": 0.028248422199047156,
+        "model_f_sig": true
+      },
+      {
+        "dropped": "Shanghai",
+        "n": 20,
+        "log_n_stations_coef": 0.018230926218374133,
+        "log_n_stations_p": 0.0371996977050018,
+        "log_n_stations_sig": true,
+        "model_f_p": 0.028687274894925636,
+        "model_f_sig": true
+      },
+      {
+        "dropped": "Changsha",
+        "n": 20,
+        "log_n_stations_coef": 0.018272054175100083,
+        "log_n_stations_p": 0.03641837469943894,
+        "log_n_stations_sig": true,
+        "model_f_p": 0.023571675574991912,
+        "model_f_sig": true
+      },
+      {
+        "dropped": "Qingdao",
+        "n": 20,
+        "log_n_stations_coef": 0.019729539930253948,
+        "log_n_stations_p": 0.023405667989767946,
+        "log_n_stations_sig": true,
+        "model_f_p": 0.01433180956706552,
+        "model_f_sig": true
+      },
+      {
+        "dropped": "Tianjin",
+        "n": 20,
+        "log_n_stations_coef": 0.018226821369181856,
+        "log_n_stations_p": 0.036777484679037874,
+        "log_n_stations_sig": true,
+        "model_f_p": 0.02132545517714591,
+        "model_f_sig": true
+      },
+      {
+        "dropped": "Harbin",
+        "n": 20,
+        "log_n_stations_coef": 0.017468237683804122,
+        "log_n_stations_p": 0.053240630119848205,
+        "log_n_stations_sig": false,
+        "model_f_p": 0.02013846144969975,
+        "model_f_sig": true
+      },
+      {
+        "dropped": "Foshan",
+        "n": 20,
+        "log_n_stations_coef": 0.01891694387175097,
+        "log_n_stations_p": 0.027052239116742042,
+        "log_n_stations_sig": true,
+        "model_f_p": 0.013480499921497944,
+        "model_f_sig": true
+      },
+      {
+        "dropped": "Chengdu",
+        "n": 20,
+        "log_n_stations_coef": 0.01883253494646997,
+        "log_n_stations_p": 0.030639060355522874,
+        "log_n_stations_sig": true,
+        "model_f_p": 0.017596043216889106,
+        "model_f_sig": true
+      },
+      {
+        "dropped": "Hangzhou",
+        "n": 20,
+        "log_n_stations_coef": 0.019030714580643565,
+        "log_n_stations_p": 0.028686369350095334,
+        "log_n_stations_sig": true,
+        "model_f_p": 0.017657572488088438,
+        "model_f_sig": true
+      },
+      {
+        "dropped": "Nanjing",
+        "n": 20,
+        "log_n_stations_coef": 0.0179424083068056,
+        "log_n_stations_p": 0.03396437824198734,
+        "log_n_stations_sig": true,
+        "model_f_p": 0.014460306981480606,
+        "model_f_sig": true
+      },
+      {
+        "dropped": "Guangzhou",
+        "n": 20,
+        "log_n_stations_coef": 0.017698432579197898,
+        "log_n_stations_p": 0.04160884369933725,
+        "log_n_stations_sig": true,
+        "model_f_p": 0.020272319913316617,
+        "model_f_sig": true
+      },
+      {
+        "dropped": "Dongguan",
+        "n": 20,
+        "log_n_stations_coef": 0.01813792998078001,
+        "log_n_stations_p": 0.04519025524849716,
+        "log_n_stations_sig": true,
+        "model_f_p": 0.0324708116996663,
+        "model_f_sig": true
+      },
+      {
+        "dropped": "Kunming",
+        "n": 20,
+        "log_n_stations_coef": 0.01833920081013174,
+        "log_n_stations_p": 0.04265826116695534,
+        "log_n_stations_sig": true,
+        "model_f_p": 0.03250432339194094,
+        "model_f_sig": true
+      },
+      {
+        "dropped": "Shenzhen",
+        "n": 20,
+        "log_n_stations_coef": 0.01756188857606114,
+        "log_n_stations_p": 0.045891912250364354,
+        "log_n_stations_sig": true,
+        "model_f_p": 0.029874022332645158,
+        "model_f_sig": true
+      },
+      {
+        "dropped": "Xi'an",
+        "n": 20,
+        "log_n_stations_coef": 0.012774199820167864,
+        "log_n_stations_p": 0.130000101368212,
+        "log_n_stations_sig": false,
+        "model_f_p": 0.010101684116602913,
+        "model_f_sig": true
+      },
+      {
+        "dropped": "Shenyang",
+        "n": 20,
+        "log_n_stations_coef": 0.01750281689403857,
+        "log_n_stations_p": 0.033221253351265495,
+        "log_n_stations_sig": true,
+        "model_f_p": 0.014224033405979048,
+        "model_f_sig": true
+      },
+      {
+        "dropped": "Jinan",
+        "n": 20,
+        "log_n_stations_coef": 0.018509456937559315,
+        "log_n_stations_p": 0.025637126213928437,
+        "log_n_stations_sig": true,
+        "model_f_p": 0.020866409901231,
+        "model_f_sig": true
+      }
+    ]
+  }
+}

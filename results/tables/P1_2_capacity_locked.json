@@ -1,0 +1,15 @@
+{
+  "nash_mode": "locked",
+  "n": 21,
+  "corr_capacity_gini_PoA": -0.432298,
+  "corr_large_ratio_PoA": 0.429493,
+  "corr_capacity_gini_large_ratio": -0.999635,
+  "mean_capacity_gini": 0.195543,
+  "capacity_gini_identical_to_classic": true,
+  "max_abs_gini_diff_vs_classic": 0.0,
+  "figures": [
+    "图A_gini_PoA_locked.png",
+    "图B_largeratio_PoA_locked.png",
+    "图C_gini_largeratio_locked.png"
+  ]
+}

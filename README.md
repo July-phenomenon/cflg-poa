@@ -19,7 +19,7 @@ directly derived from them, which are not redistributed (see
 | `code/01_parameter_derivation/` | Derivation of the 21-city instance parameters from the accessibility rasters (§5.1) |
 | `code/02_core_solver/` | Two-phase MILP (§3.3), Nash best-response (§3.4), satisfaction functions (§3.2), synthetic instance generator (§3.1, §6) |
 | `code/03_experiments/` | Experiment 1 (21 cities, §5), experiment 2 (full enumeration, §6), experiment 3 (subsidy, §7) |
-| `code/04_sensitivity/` | Capacity heterogeneity, budget, cluster radius, γ and S₂ robustness (§5.5, §6.5, appendices) |
+| `code/04_sensitivity/` | Capacity heterogeneity, budget, cluster radius (`cluster_radius_21.py`), γ and S₂ robustness (§5.5, §6.5, appendices) |
 | `code/05_figures_tables/` | One entry point per figure and per table |
 | `code/utils/` | Shared constants, plotting template, I/O helpers |
 | `data/processed/` | 21-city parameters (derived from publicly available rasters) |
@@ -28,11 +28,14 @@ directly derived from them, which are not redistributed (see
 | `docs/` | Reproduction guide, environment notes, troubleshooting, checklist |
 | `tests/` | Unit tests for the solver and the satisfaction functions |
 
-**Solver:** [PuLP](https://github.com/coin-or/PuLP) with the bundled
-**CBC** mixed-integer solver.  CBC is open source; no licence key, no
-registration, no network access is required.  No commercial solver is used
-anywhere in this project, so the package is fully reproducible with free
-tooling.
+**Solver:** [PuLP](https://github.com/coin-or/PuLP) with the **HiGHS** MILP solver
+bundled with PuLP 3.x.  HiGHS is used for the exact single-MILP Phase 2 of every
+result reported in the paper; CBC (also bundled with PuLP) is kept only as an
+optional cross-check (`solver="cbc"`), because CBC 2.10 rejects some of these
+instances as *infeasible* while HiGHS and CBC-on-LP both return the correct
+optimum (see the header of `code/02_core_solver/core_solver_exact.py`).  Both
+solvers are open source; no licence key, registration or network access is
+required.
 
 ---
 
@@ -48,12 +51,26 @@ bash scripts/run_all.sh          # Linux / macOS / Git-Bash
 powershell -ExecutionPolicy Bypass -File scripts/run_all.ps1
 ```
 
-Every script can also be run individually from the repository root, e.g.
+Every script can also be run individually from the repository root.  The exact
+(the paper's) chain is:
 
 ```bash
-python code/03_experiments/exp1_21cities.py
-python code/05_figures_tables/fig1_poa21.py
+python code/03_experiments/exp2_enumeration_exact.py                       # 15,207 configs
+python code/03_experiments/exp1_21cities.py --exact-phase2 --nash-mode locked \
+       --budget-per-station 36 --output results/main/21cities_exact_locked.json
+python code/03_experiments/exp1_21cities.py --exact-phase2 --nash-mode classic \
+       --budget-per-station 36 --output results/main/21cities_exact_classic.json
+python code/03_experiments/exp3_subsidy.py --exact-phase2                  # subsidy
+python code/03_experiments/exp1_regression.py                              # Table 4 + LOO
+python code/04_sensitivity/cap_floor_sensitivity.py --exact-phase2 ...     # theta sweep
+python code/05_figures_tables/export_exact_figure_inputs.py                # figure inputs
+python code/05_figures_tables/make_figures_paper.py                        # the 4 figures + GA
+python tests/verify_paper_numbers.py                                       # 102-number audit
 ```
+
+`tests/verify_paper_numbers.py` recomputes every number quoted in the manuscript
+from the exact artefacts and exits non-zero on any mismatch, so it doubles as a
+regression test for the paper itself.
 
 Scripts locate the repository root through the `CFLG_ROOT` environment
 variable and fall back to the directory two levels above the script, so no
@@ -63,23 +80,33 @@ absolute path is hardcoded anywhere.
 
 ## 3. Time budget
 
-Measured on an 8-core desktop (single process unless stated).
+Measured on an 8-core desktop (single process unless stated; exact solver, 2026-10).
 
 | Step | Command | Expected time |
 |---|---|---|
 | Environment | `pip install -r requirements.txt` | 5–10 min |
 | Parameter derivation | `code/01_parameter_derivation/` | 2–5 min |
-| Experiment 1 (21 cities) | `exp1_21cities.py` | 15–30 min |
-| Experiment 2 (15,207 configs) | `exp2_enumeration.py --workers 8` | 60–120 min |
-| Experiment 3 (subsidy) | `exp3_subsidy.py` | 10–20 min |
-| Sensitivity analyses | `code/04_sensitivity/` | 30–45 min |
-| Figures and tables | `code/05_figures_tables/` | 2–5 min |
-| **Total** | | **≈ 2–3.5 h** |
+| Experiment 1 (21 cities, exact) | `exp1_21cities.py --exact-phase2 --phase2-time-limit 180` | 1.5–2.5 h |
+| Experiment 2 (15,207 configs, exact) | `exp2_enumeration_exact.py` | 2–3 min |
+| Experiment 3 (subsidy, exact) | `exp3_subsidy.py --exact-phase2` | 8–15 min |
+| Regression + leave-one-out | `exp1_regression.py` | < 1 min |
+| Sensitivity: theta sweep | `cap_floor_sensitivity.py --exact-phase2` | 3 min per grid |
+| Cluster-radius cells (optional) | `cluster_radius_21.py` | 1.5–2.5 h per factor |
+| Figures and tables | `export_exact_figure_inputs.py` + `make_figures_paper.py` | < 1 min |
+| Paper audit | `tests/verify_paper_numbers.py` | < 1 min |
+| **Total** | | **≈ 2–3 h** |
 
-A smoke test that exercises the whole pipeline without the long sweep:
+The 21-city cells are the only slow step and they dominate the budget: with no
+`--phase2-time-limit` a single city can take well over 20 minutes of wall time,
+so the 180 s cap is what makes a full sweep tractable. All 21 cities still reach
+solver optimality with that cap. Every city is checkpointed, so an interrupted
+sweep resumes rather than restarts.
+
+A smoke test that exercises the whole pipeline without the long sweeps:
 
 ```bash
-python code/03_experiments/exp2_enumeration.py --limit 200 --workers 4
+python code/03_experiments/exp2_enumeration_exact.py --limit 200
+python code/03_experiments/exp1_21cities.py --exact-phase2 --limit 2
 ```
 
 ---
@@ -145,22 +172,19 @@ Full details: [`data/external/DATA_SOURCES.md`](data/external/DATA_SOURCES.md).
 
 ## 6. Reproducing specific paper results
 
-| Paper item | Command | Output |
+| Paper item | Source artefact | Regenerate with |
 |---|---|---|
-| Table 1 (layered bounds) | `python code/05_figures_tables/table1_layered.py` | `results/tables/Table6_2_layered_stats.csv` |
-| Table 2 (21-city parameters) | `python code/05_figures_tables/table2_city_params.py` | `results/tables/Table5_1_21cities_params.csv` |
-| Table 3 (21-city PoA) | `python code/05_figures_tables/table3_poa21.py` | `results/tables/Table5_2_21cities_PoA.csv` |
-| Table 4 (regression) | `python code/05_figures_tables/table4_regression.py` | regression output, §5.4 |
-| Table 5 (enumeration distribution) | `python code/05_figures_tables/table5_poa_dist.py` | `results/tables/Table6_1_enum_stats.csv` |
-| Table 6 (subsidy comparison) | `python code/05_figures_tables/table6_subsidy.py` | `results/tables/Table7_1_subsidy_comparison.csv` |
-| Table 7 (three specifications) | `python code/05_figures_tables/table7_three_specs.py` | `results/tables/TableA_1_three_specs.csv` |
-| Table 8 (channel contributions) | `python code/05_figures_tables/table8_channels.py` | channel decomposition |
-| Table 9 (full subsidy table) | `python code/05_figures_tables/table9_full_subsidy.py` | appendix B |
-| Figure 1 | `python code/05_figures_tables/fig1_poa21.py` | `results/figures/figure1.pdf` |
-| Figure 2 | `python code/05_figures_tables/fig2_poa_dist.py` | `results/figures/figure2.pdf` |
-| Figure 3 | `python code/05_figures_tables/fig3_channel.py` | `results/figures/figure3.pdf` |
-| Figure 4 | `python code/05_figures_tables/fig4_subsidy.py` | `results/figures/figure4.pdf` |
-| Graphical abstract | `python code/05_figures_tables/fig_ga.py` | `results/figures/GraphicalAbstract.pdf` |
+| Table 1 (layered bounds) | `results/main/results_enumeration_exact.json` | `python code/03_experiments/exp2_layered_bounds.py` |
+| Table 2 (21-city parameters) | `data/processed/21city_parameters.json` | `python code/05_figures_tables/table2_city_params.py` |
+| Table 3 (21-city PoA) | `21cities_exact_locked.json` | `python code/05_figures_tables/export_exact_figure_inputs.py` |
+| Table 4 (regression + LOO) | `21cities_exact_locked.json` | `python code/03_experiments/exp1_regression.py` |
+| Table 5 (enumeration distribution) | `results_enumeration_exact.json` | `python code/05_figures_tables/table5_poa_dist.py` |
+| Table 6 (subsidy comparison) | `_subsidy_exact/subsidy_exact.json` | `python code/05_figures_tables/export_exact_figure_inputs.py` |
+| Table 7 (three specifications) | the two 21-city JSONs | `python code/05_figures_tables/table7_three_specs.py` |
+| Table 8 (channel contributions) | `results_enumeration_exact.json` | `python code/03_experiments/exp2_enumeration_channels.py` |
+| Table 9 (full subsidy table) | `_subsidy_exact/subsidy_exact.json` | `python code/05_figures_tables/table9_full_subsidy.py` |
+| Figures 1–4, graphical abstract | exact JSONs + `results/tables/_exact_src/*.csv` | `python code/05_figures_tables/make_figures_paper.py` |
+| Every number in the text | all of the above | `python tests/verify_paper_numbers.py` |
 
 Step-by-step instructions, expected numerical values and the list of results
 that can and cannot be bit-reproduced are in
@@ -175,9 +199,16 @@ that can and cannot be bit-reproduced are in
   `hash()`, so they do not depend on `PYTHONHASHSEED`. The enumeration uses a
   fixed seed (`2024`). No experiment depends on wall-clock time or on the
   order of dictionary iteration.
+* **Optimality-certified.** Every Phase-2 benchmark is a single HiGHS MILP with
+  a 1e-9 relative gap, and each solution is re-verified in plain NumPy
+  (capacity, coverage lock, staircase consistency) before it enters a result
+  file. No PoA is a lower bound.
+* **Audited.** `tests/verify_paper_numbers.py` recomputes 102 published numbers
+  from the artefacts and fails loudly on any drift.
 * **No absolute paths.** All I/O goes through `CFLG_ROOT` / package-relative
   defaults.
-* **No hidden state.** Intermediate results are plain JSON/CSV.
+* **No hidden state.** Intermediate results are plain JSON/CSV, written
+  atomically; every long run also keeps a per-city checkpoint.
 
 Known limits (documented in full in `docs/REPRODUCIBILITY.md`):
 
@@ -186,6 +217,11 @@ Known limits (documented in full in `docs/REPRODUCIBILITY.md`):
 * Because the raw competition inputs and the archived enumeration output are
   not redistributed, the four-decimal statistics of §6 are reproduced to the
   accuracy stated in `docs/REPRODUCIBILITY.md`, not bit-for-bit.
+* Two independent exact runs of the enumeration (same geometry, different MILP
+  gap tolerance) agree on 15,206 of 15,207 configurations; the single
+  disagreement is a near-tie in which `F2_MILP` moves by 1.5e-5, i.e. far below
+  the four-decimal reporting precision. Every aggregate statistic in the paper
+  is unchanged at four decimals.
 
 ---
 

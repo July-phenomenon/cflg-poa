@@ -20,3 +20,23 @@ data/raw/han_et_al_2026_rasters/
 poa_full_per_config*.json
 delta_S2_*.json
 21城市*.json
+
+# ---------------------------------------------------------------------------
+# Debug / scratch artifacts (kept locally, never published)
+# Underscore-prefixed throwaway scripts and scratch directories
+_*.py
+_tmpdbg/
+
+# Debug LP / MPS solver dumps
+*.lp
+
+# Local verification scratch output
+results/_verify/
+results/tables/_exact_src/
+
+# Extra diagnostic figures (not the four paper figures)
+results/figures/*_locked.png
+results/figures/connectivity_gap_scatter.png
+
+# Large per-configuration sensitivity raw outputs (regenerable from scripts)
+results/sensitivity/*_per_config.json

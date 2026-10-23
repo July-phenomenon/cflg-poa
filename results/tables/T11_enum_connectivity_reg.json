@@ -1,0 +1,22 @@
+{
+  "source": "results_enumeration_exact.json",
+  "n": 15207,
+  "geometry": {
+    "seed": 2024,
+    "side_m": 2200.0,
+    "radius_m": 1000.0
+  },
+  "simple": {
+    "beta_connectivity": 0.165467,
+    "p_value": 0.0,
+    "r_squared": 0.006878,
+    "correlation": 0.0829
+  },
+  "controlled": {
+    "beta_connectivity": 0.165467,
+    "p_connectivity": 0.0,
+    "beta_log_n_sta": 0.054544,
+    "p_log_n_sta": 0.0,
+    "r_squared": 0.034652
+  }
+}
