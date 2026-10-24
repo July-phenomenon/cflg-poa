@@ -40,7 +40,7 @@ os.makedirs(FIG, exist_ok=True)
 # runs, so the figures must read those files rather than the superseded
 # fixed-point archive.  Both CSVs are (re)written by
 # code/05_figures_tables/export_exact_figure_inputs.py.
-PRM = os.path.join(ROOT, "results", "tables", "_exact_src")
+PRM = os.path.join(ROOT, "results", "tables", "figure_inputs")
 NUM = os.path.join(ROOT, "results", "main")
 
 # ---------------------------------------------------------------------------
@@ -433,14 +433,14 @@ def ga():
              fontsize=13, fontweight="bold")
     fig.text(0.5, 0.920, "with Congestion Feedback", ha="center", va="top",
              fontsize=13, fontweight="bold")
-    fig.text(0.5, 0.895, "Censored satisfaction bounds the PoA; coverage drives the gap",
+    fig.text(0.5, 0.895, "Censored satisfaction bounds the PoA; assignment leads the gap",
              ha="center", va="top", fontsize=10, style="italic")
 
     # ---- Top panel: donut chart ----
     ax1 = fig.add_subplot(gs[0, 0])
     sectors = ["Coverage", "Assignment", "Congestion"]
     # Use absolute magnitudes for wedge sizes; congestion shown in negative color.
-    values = [81.9, 34.2, abs(-14.9)]
+    values = [43.1, 69.3, 12.6]
     colors = [COLORS["primary"], COLORS["light_fill"], COLORS["negative"]]
     wedges, texts = ax1.pie(values, colors=colors, startangle=90, counterclock=False,
                             wedgeprops=dict(width=0.4, edgecolor="white", linewidth=1.5))
@@ -472,10 +472,10 @@ def ga():
 
     # Bottom text
     fig.text(0.5, 0.055,
-             "21 cities (mean PoA 1.0420)   ·   15,207 configs (mean PoA 1.0610)",
+             "21 cities (mean PoA 1.0376)   ·   15,207 configs (mean PoA 1.0610)",
              ha="center", va="top", fontsize=10)
     fig.text(0.5, 0.020,
-             "Assignment channel: +69.3%  ·  Coverage: +43.1%  ·  Congestion: −12.6%",
+             "Assignment channel: +69.3%  ·  Coverage: +43.1%  ·  Congestion: -12.6%",
              ha="center", va="top", fontsize=11, fontweight="bold")
 
     fig.savefig(os.path.join(FIG, "GraphicalAbstract.pdf"), bbox_inches="tight")

@@ -3,13 +3,20 @@
 
 `make_figures_paper.py` (the generator of the submitted figures) reads
 
-    results/tables/_exact_src/Table5_2_21cities_PoA.csv        city, PoA
-    results/tables/_exact_src/Table7_1_subsidy_comparison.csv  city, PoA_base,
-                                                               PoA_subsidized_consistent
+    results/tables/figure_inputs/Table5_2_21cities_PoA.csv        city, PoA
+    results/tables/figure_inputs/Table7_1_subsidy_comparison.csv  city, PoA_base,
+                                                                  PoA_subsidized_consistent
 
-from the EXACT runs.  Before 2026-10-23 these two files were produced ad hoc, so
-the figure pipeline could not be replayed from a clean checkout.  This script
-closes that gap: it rebuilds both files from
+from the EXACT runs.  Before 2026-10-23 these two files were produced ad hoc and
+landed in ``results/tables/_exact_src/``, which is listed in ``.gitignore``; the
+figure pipeline therefore could not be replayed from a clean checkout.  This
+script now rebuilds both files into the **tracked** directory
+``results/tables/figure_inputs/``, so that Figures 1 and 4 are reproducible from
+a clean checkout even though the underlying experiment artefacts stay private.
+
+The two CSVs are small aggregates (21 rows) of results that are already printed
+in the paper's Tables 5 and 10, so publishing them does not widen the
+redistribution boundary (see data/external/DATA_SOURCES.md).
 
     results/main/21cities_exact_locked.json
     results/main/_subsidy_exact/subsidy_exact.json
@@ -25,7 +32,7 @@ ROOT = os.environ.get(
     "CFLG_ROOT",
     os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")))
 NUM = os.path.join(ROOT, "results", "main")
-OUT = os.path.join(ROOT, "results", "tables", "_exact_src")
+OUT = os.path.join(ROOT, "results", "tables", "figure_inputs")
 
 C21 = os.path.join(NUM, "21cities_exact_locked.json")
 SUB = os.path.join(NUM, "_subsidy_exact", "subsidy_exact.json")

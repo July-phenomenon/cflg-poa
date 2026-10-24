@@ -81,13 +81,20 @@ def save(fig, name):
 # from the competition specification, see data/external/DATA_SOURCES.md).
 # It is therefore resolved at run time, in this order:
 #   1. $CFLG_ENUM_JSON                     - explicit override
-#   2. results/main/results_enumeration.json - output of code/03_experiments/
-#                                              exp2_enumeration.py (shipped)
-#   3. <root>/poa_full_per_config_s2.json  - legacy archive name
+#   2. results/main/results_enumeration_exact.json
+#                                          - output of exp2_enumeration_exact.py,
+#                                            the basis of the SUBMITTED figures.
+#   3. results/main/results_enumeration.json
+#                                          - superseded earlier run; kept only as
+#                                            a last resort because it reproduces
+#                                            STALE figures.
+#   4. <root>/poa_full_per_config_s2.json  - legacy archive name
 # Figures 2, 3 and the graphical abstract need it; Figure 1 and Figure 4 do not
-# and are always reproducible from the shipped processed data alone.
+# and are always reproducible from the shipped processed data alone
+# (results/tables/figure_inputs/).
 _ENUM_CANDIDATES = [
     os.environ.get("CFLG_ENUM_JSON") or "",
+    os.path.join(ROOT, "results", "main", "results_enumeration_exact.json"),
     os.path.join(ROOT, "results", "main", "results_enumeration.json"),
     os.path.join(ROOT, "poa_full_per_config_s2.json"),
 ]
@@ -137,13 +144,13 @@ else:
     enum_valid, enum_poa, locked = [], None, None
     ch_assign = ch_congest = ch_cov = None
 
-# 21-city data
-c21 = read_csv(os.path.join(PRM, "Table5_2_21cities_PoA.csv"))
+# 21-city data (exact single-MILP benchmark, matches Table tab:poa21 in the paper)
+c21 = read_csv(os.path.join(PRM, "figure_inputs", "Table5_2_21cities_PoA.csv"))
 c21_city = [r["city"] for r in c21]
 c21_poa = np.array([float(r["PoA"]) for r in c21])
 
-# Subsidy data
-sub = read_csv(os.path.join(PRM, "Table7_1_subsidy_comparison.csv"))
+# Subsidy data (exact benchmark, matches Table tab:subsidycities in the paper)
+sub = read_csv(os.path.join(PRM, "figure_inputs", "Table7_1_subsidy_comparison.csv"))
 sub = [r for r in sub if r["city"] != "MEAN"]
 sub_city = [r["city"] for r in sub]
 sub_base = np.array([float(r["PoA_base"]) for r in sub])
@@ -175,8 +182,8 @@ def fig1_poa21():
     ax.set_yticks(y)
     ax.set_yticklabels(cities, fontsize=9)
     ax.invert_yaxis()
-    ax.set_xlabel("Sequential PoA (≥)", fontsize=10)
-    ax.set_xlim(0.98, 1.08)
+    ax.set_xlabel("Sequential PoA", fontsize=10)
+    ax.set_xlim(0.99, 1.085)
 
     leg = [
         Line2D([0], [0], marker="o", color="w", markerfacecolor=COLORS["primary"],
@@ -185,7 +192,7 @@ def fig1_poa21():
                markersize=8, label="PoA ≤ 1"),
     ]
     ax.legend(handles=leg, loc="upper right", fontsize=9, frameon=False)
-    ax.set_title("Sequential PoA across the 21 real cities", fontsize=11, pad=10)
+    # in-figure title removed: caption carries the identification (CAOR style)
 
     fig.tight_layout()
     save(fig, "fig1_poa21")
@@ -203,7 +210,7 @@ def fig2_poa_dist():
     fig, ax = plt.subplots(figsize=(4.5, 3.5))
 
     bins = 50
-    range_ = (0.9, 1.5)
+    range_ = (0.9, 1.7)
     counts, bin_edges = np.histogram(enum_poa, bins=bins, range=range_)
     ax.hist(enum_poa, bins=bins, range=range_, color=COLORS["primary"],
             edgecolor="white", linewidth=0.3, alpha=0.75)
@@ -218,16 +225,18 @@ def fig2_poa_dist():
     ax.axvline(1.0, color=COLORS["neutral"], lw=0.8, ls="--", label="PoA = 1")
     mean_val = float(f"{np.mean(enum_poa):.4f}")
     median_val = float(f"{np.median(enum_poa):.4f}")
+    mean_str = f"{np.mean(enum_poa):.4f}"
+    median_str = f"{np.median(enum_poa):.4f}"
     ax.axvline(mean_val, color=COLORS["negative"], lw=1.2, ls="--",
-               label=f"Mean ≥ {mean_val}")
+               label=f"Mean {mean_str}")
     ax.axvline(median_val, color=COLORS["secondary"], lw=1.2, ls="-.",
-               label=f"Median ≥ {median_val}")
+               label=f"Median {median_str}")
 
-    ax.set_xlabel("Measured sequential PoA (≥)", fontsize=10)
+    ax.set_xlabel("Measured sequential PoA", fontsize=10)
     ax.set_ylabel("Configurations", fontsize=10)
     ax.set_xlim(range_)
     ax.legend(loc="upper right", fontsize=9, frameon=False)
-    ax.set_title("Distribution of the sequential PoA", fontsize=11, pad=10)
+    # in-figure title removed: caption carries the identification (CAOR style)
 
     fig.tight_layout()
     save(fig, "fig2_poa_dist")
@@ -361,29 +370,35 @@ def fig3_channel():
     ax.set_title("A. Channel contributions", fontsize=11, pad=10)
 
     # ---- Panel B: stacked median-share bars ----
+    # Values recomputed from results/main/results_enumeration_exact.json
+    # (locked = nash_F1 == milp_F1; non-degenerate = |ch_congestion| > 0).
+    # Bar 3 uses the 5 coverage-aligned 21-city instances with a non-zero gap
+    # (see Section 5.3 of the paper); S1 is negative there, so it is drawn
+    # downward from zero.
     ax = axes[1]
-    labels_x = ["All locked\n($n = 4{,}317$)",
-                "Non-degenerate\n($n = 908$)",
-                "21 cities\n($n = 8$)"]
-    s1 = [1.00, 0.55, 0.00]
-    s2 = [0.00, 0.45, 0.99]
+    labels_x = ["All locked\n($n = 1{,}604$)",
+                "Non-degenerate\n($n = 1{,}074$)",
+                "21 cities\n($n = 5$)"]
+    s1 = [0.68, 0.29, -0.11]
+    s2 = [0.32, 0.71, 1.10]
     x = np.arange(len(labels_x))
     w = 0.52
 
-    ax.bar(x, s1, w, label="$S_1$ (distance)", color=COLORS["primary"])
-    ax.bar(x, s2, w, bottom=s1, label="$S_2$ (congestion)", color=COLORS["secondary"])
+    ax.bar(x, s2, w, label="$S_2$ (congestion)", color=COLORS["secondary"])
+    ax.bar(x, s1, w, label="$S_1$ (assignment)", color=COLORS["primary"])
 
+    ax.axhline(0, color=COLORS["neutral"], lw=0.8, zorder=0)
     ax.set_xticks(x)
     ax.set_xticklabels(labels_x, fontsize=9)
     ax.set_ylabel("Median share", fontsize=10)
-    ax.set_ylim(0, 1.05)
+    ax.set_ylim(-0.25, 1.20)
     ax.legend(loc="upper center", fontsize=9, frameon=False,
               bbox_to_anchor=(0.5, -0.15), ncol=2)
     ax.set_title("B. Median shares by lock status", fontsize=11, pad=10)
 
     # ---- Panel C: layered PoA (vertical violins, no scatter) ----
     ax = axes[2]
-    ylim_c = (0.9, 1.5)
+    ylim_c = (0.9, 1.7)
     y_grid = np.linspace(ylim_c[0], ylim_c[1], 400)
     _vertical_violin_box(ax, 0, enum_poa[locked], COLORS["primary"],
                          violin_width=0.6, y_grid=y_grid, ylim=ylim_c)
@@ -392,7 +407,7 @@ def fig3_channel():
     ax.axhline(1.0, color=COLORS["neutral"], lw=0.8, zorder=0)
     ax.set_xticks([0, 1])
     ax.set_xticklabels(["Locked\n($n = 4{,}317$)", "Unlocked\n($n = 10{,}890$)"], fontsize=9)
-    ax.set_ylabel("Measured PoA (≥)", fontsize=10)
+    ax.set_ylabel("Measured PoA", fontsize=10)
     ax.set_ylim(ylim_c)
     ax.set_title("C. Layered Price of Anarchy", fontsize=11, pad=10)
 
@@ -428,17 +443,17 @@ def fig4_subsidy():
     ax.set_yticks(y)
     ax.set_yticklabels(cities, fontsize=9)
     ax.invert_yaxis()
-    ax.set_xlabel("Measured PoA (≥, consistent specification)", fontsize=10)
+    ax.set_xlabel("Measured PoA (consistent specification)", fontsize=10)
     ax.set_xlim(0.99, 1.19)
 
     leg = [
         Line2D([0], [0], marker="o", color="w", markerfacecolor=COLORS["primary"],
-               markersize=8, label=f"Base ≥ {mean_b}"),
+               markersize=8, label=f"Base (mean {mean_b})"),
         Line2D([0], [0], marker="o", color="w", markerfacecolor=COLORS["secondary"],
-               markersize=8, label=f"Subsidized ≥ {mean_c}"),
+               markersize=8, label=f"Subsidized (mean {mean_c})"),
     ]
     ax.legend(handles=leg, loc="upper right", fontsize=9, frameon=False)
-    ax.set_title("Per-city PoA before and after the V2 subsidy", fontsize=11, pad=10)
+    # in-figure title removed: caption carries the identification (CAOR style)
 
     fig.tight_layout()
     save(fig, "fig4_subsidy")
@@ -472,7 +487,7 @@ def ga():
     ax1 = fig.add_subplot(gs[0, 0])
     sectors = ["Coverage", "Assignment", "Congestion"]
     # Use absolute magnitudes for wedge sizes; congestion shown in negative color.
-    values = [44.8, 71.8, abs(-17.1)]
+    values = [43.1, 69.3, 12.6]
     colors = [COLORS["primary"], COLORS["light_fill"], COLORS["negative"]]
     wedges, texts = ax1.pie(values, colors=colors, startangle=90, counterclock=False,
                             wedgeprops=dict(width=0.4, edgecolor="white", linewidth=1.5))
@@ -484,7 +499,7 @@ def ga():
     # ---- Bottom panel: histogram + KDE ----
     ax2 = fig.add_subplot(gs[1, 0])
     bins = 50
-    range_ = (0.9, 1.5)
+    range_ = (0.9, 1.7)
     ax2.hist(enum_poa, bins=bins, range=range_, color=COLORS["primary"],
              edgecolor="white", linewidth=0.3, alpha=0.75)
 
@@ -498,16 +513,16 @@ def ga():
     ax2.axvline(mean_val, color=COLORS["negative"], lw=1.2, ls="--")
     ax2.axvline(1.0, color=COLORS["neutral"], lw=0.8, ls="--")
 
-    ax2.set_xlabel("Measured sequential PoA (≥)", fontsize=11)
+    ax2.set_xlabel("Measured sequential PoA", fontsize=11)
     ax2.set_ylabel("Configurations", fontsize=11)
     ax2.set_xlim(range_)
 
     # Bottom text
     fig.text(0.5, 0.055,
-             "21 cities (mean PoA ≥ 1.0267)   ·   15,207 configs (mean PoA ≥ 1.0592)",
+             "21 cities (mean PoA 1.0376)   ·   15,207 configs (mean PoA 1.0610)",
              ha="center", va="top", fontsize=10)
     fig.text(0.5, 0.020,
-             "Assignment channel: +71.8%  ·  Coverage channel: +44.8%",
+             "Assignment channel: +69.3%  ·  Coverage: +43.1%  ·  Congestion: -12.6%",
              ha="center", va="top", fontsize=11, fontweight="bold")
 
     fig.savefig(os.path.join(FIG, "GraphicalAbstract.pdf"), bbox_inches="tight")
