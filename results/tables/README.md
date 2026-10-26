@@ -21,12 +21,13 @@ Upstream (private, regenerated locally, not redistributed):
 `results/main/21cities_exact_locked.json` and
 `results/main/_subsidy_exact/subsidy_exact.json`.
 
-## Legacy — do not use as a source of truth for the manuscript
+## Other reference CSVs in this directory
 
-`Table5_2_21cities_PoA.csv` and `Table7_1_subsidy_comparison.csv` at the top level
-of this directory come from an **earlier baseline** (36-wan station budget, before
-the geometry unification) and disagree with the submitted manuscript. They are
-kept only because `make_tables.py` writes to those paths and the table generators
-still reference them. The difficult-to-regenerate reason: `make_tables.py` reads
-`results/main/21城市*.json`, artefacts of that earlier run that are no longer
-available. Prefer the `figure_inputs/` copies in any cross-check.
+The remaining `*.csv` files at the top level of `results/tables/` (e.g.
+`Table5_1_21cities_params.csv`, `Table6_1_enum_stats.csv`,
+`TableA_1_three_specs.csv`, `21city_channel_decomposition.csv`) are the published
+**table bodies** for the corresponding manuscript tables. They are reference copies
+produced by the table generators under `code/05_figures_tables/` and are safe to
+use as a source of truth for those tables. The two figure-input aggregates that
+drive Figures 1, 4 and the graphical abstract live only in `figure_inputs/` and
+are the authoritative copies for those figures.

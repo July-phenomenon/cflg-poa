@@ -25,6 +25,7 @@ directly derived from them, which are not redistributed (see
 | `data/processed/` | 21-city parameters (derived from publicly available rasters) |
 | `results/figures/` | The four published figures + graphical abstract (reference copies) |
 | `results/tables/` | The published table bodies as CSV (reference copies) |
+| `results/main/` | Exact single-MILP benchmark JSONs — **regenerated locally by the experiment scripts**, not shipped (see §5). `results/enumeration_poa_results.csv` (one row per configuration) *is* shipped |
 | `docs/` | Reproduction guide, environment notes, troubleshooting, checklist |
 | `tests/` | Unit tests for the solver and the satisfaction functions |
 
@@ -183,7 +184,7 @@ Full details: [`data/external/DATA_SOURCES.md`](data/external/DATA_SOURCES.md).
 | Table 7 (three specifications) | the two 21-city JSONs | `python code/05_figures_tables/table7_three_specs.py` |
 | Table 8 (channel contributions) | `results_enumeration_exact.json` | `python code/03_experiments/exp2_enumeration_channels.py` |
 | Table 9 (full subsidy table) | `_subsidy_exact/subsidy_exact.json` | `python code/05_figures_tables/table9_full_subsidy.py` |
-| Figures 1–4, graphical abstract | exact JSONs + `results/tables/_exact_src/*.csv` | `python code/05_figures_tables/make_figures_paper.py` |
+| Figures 1–4, graphical abstract | exact JSONs + `results/tables/figure_inputs/*.csv` | `python code/05_figures_tables/make_figures.py` then `make_figures_paper.py` |
 | Every number in the text | all of the above | `python tests/verify_paper_numbers.py` |
 
 Step-by-step instructions, expected numerical values and the list of results
