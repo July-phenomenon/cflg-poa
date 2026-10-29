@@ -1,0 +1,71 @@
+{
+  "source": "results_enumeration_exact.json",
+  "n": 15207,
+  "geometry": {
+    "seed": 2024,
+    "side_m": 2200.0,
+    "radius_m": 1000.0
+  },
+  "locked_share": 0.28388242256855395,
+  "models": {
+    "M1_connectivity": {
+      "params": [
+        0.9948273169620806,
+        0.16546652089107547
+      ],
+      "pvalues": [
+        0.0,
+        1.2628486458905475e-24
+      ],
+      "r_squared": 0.0068777359239996505,
+      "adj_r_squared": 0.006812420418305765,
+      "n": 15207
+    },
+    "M2_locked": {
+      "params": [
+        1.0815542899687158,
+        -0.07235518305203809
+      ],
+      "pvalues": [
+        0.0,
+        0.0
+      ],
+      "r_squared": 0.19440922605801914,
+      "adj_r_squared": 0.19435624409327457,
+      "n": 15207
+    },
+    "M3_locked_connectivity": {
+      "params": [
+        1.021007751922953,
+        -0.07215324121754375,
+        0.15122302577143357
+      ],
+      "pvalues": [
+        0.0,
+        0.0,
+        1.818111318615764e-25
+      ],
+      "r_squared": 0.20015232860952503,
+      "adj_r_squared": 0.20004711318313861,
+      "n": 15207
+    },
+    "M4_locked_connectivity_lognsta": {
+      "params": [
+        0.9910065507482844,
+        -0.06961652467424412,
+        0.15172378927275545,
+        0.020829420699462222
+      ],
+      "pvalues": [
+        0.0,
+        0.0,
+        9.763783747569824e-26,
+        1.5726673905783777e-17
+      ],
+      "r_squared": 0.20396390832999334,
+      "adj_r_squared": 0.2038068269463843,
+      "n": 15207
+    }
+  },
+  "notes": "connectivity = mean over communities of (#stations within 1000 m)/n_sta, rebuilt from the shipped generator; locked = |milp_F1-nash_F1|<=1e-9"
+}

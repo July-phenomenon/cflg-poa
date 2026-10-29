@@ -1,0 +1,120 @@
+{
+  "source": "results\\main\\21cities_exact_locked.json",
+  "cuts_pct": [
+    20.0,
+    35.0
+  ],
+  "bands": [
+    {
+      "band": 0,
+      "name": "Low (<20%)",
+      "n": 4,
+      "cities": [
+        "Kunming",
+        "Dongguan",
+        "Shenzhen",
+        "Foshan"
+      ],
+      "poa_mean": 1.0073750000000001,
+      "poa_median": 1.0,
+      "poa_min": 1.0,
+      "poa_max": 1.0295,
+      "cov_mean": 0.14334175,
+      "delta_cov_mean": 0.00116275,
+      "delta_s2_mean": 0.00230775,
+      "n_cov_aligned": 3
+    },
+    {
+      "band": 1,
+      "name": "Medium (20-35%)",
+      "n": 11,
+      "cities": [
+        "Xi'an",
+        "Qingdao",
+        "Shenyang",
+        "Dalian",
+        "Harbin",
+        "Jinan",
+        "Guangzhou",
+        "Nanjing",
+        "Tianjin",
+        "Hangzhou",
+        "Zhengzhou"
+      ],
+      "poa_mean": 1.0323727272727272,
+      "poa_median": 1.0351,
+      "poa_min": 1.0021,
+      "poa_max": 1.065,
+      "cov_mean": 0.28512963636363636,
+      "delta_cov_mean": 0.005984909090909091,
+      "delta_s2_mean": 0.014749636363636364,
+      "n_cov_aligned": 5
+    },
+    {
+      "band": 2,
+      "name": "High ($\\geq$35%)",
+      "n": 6,
+      "cities": [
+        "Beijing",
+        "Chengdu",
+        "Changsha",
+        "Shanghai",
+        "Wuhan",
+        "Chongqing"
+      ],
+      "poa_mean": 1.0674,
+      "poa_median": 1.06845,
+      "poa_min": 1.0513,
+      "poa_max": 1.0791,
+      "cov_mean": 0.4020869999999999,
+      "delta_cov_mean": 0.010714666666666666,
+      "delta_s2_mean": 0.04769816666666666,
+      "n_cov_aligned": 0
+    }
+  ],
+  "monotone": true,
+  "cut_sensitivity": [
+    {
+      "lo": 0.18,
+      "hi": 0.33,
+      "n": [
+        3,
+        10,
+        8
+      ],
+      "mean": [
+        1.0,
+        1.0287,
+        1.0628
+      ]
+    },
+    {
+      "lo": 0.2,
+      "hi": 0.35,
+      "n": [
+        4,
+        11,
+        6
+      ],
+      "mean": [
+        1.0074,
+        1.0324,
+        1.0674
+      ]
+    },
+    {
+      "lo": 0.22,
+      "hi": 0.37,
+      "n": [
+        4,
+        13,
+        4
+      ],
+      "mean": [
+        1.0074,
+        1.0363,
+        1.0722
+      ]
+    }
+  ]
+}

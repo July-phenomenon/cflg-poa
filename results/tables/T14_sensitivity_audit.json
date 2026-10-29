@@ -1,0 +1,300 @@
+[
+  {
+    "dimension": "satisfaction floor theta=0.50",
+    "metric": "locked n / locked max / mean / p95 / max",
+    "claimed": [
+      4416,
+      1.2174,
+      1.0502,
+      1.1812,
+      1.8798
+    ],
+    "recomputed": [
+      4416,
+      1.2173982162853525,
+      1.050228227366784,
+      1.1811676598952197,
+      1.879757874089389
+    ],
+    "verdict": "REPRODUCED",
+    "artifact": "results\\sensitivity\\cap_floor_theta_0.50_exact_per_config.json"
+  },
+  {
+    "dimension": "satisfaction floor theta=0.50",
+    "metric": "violations of 1/theta on locked layer",
+    "claimed": 0,
+    "recomputed": 0,
+    "verdict": "REPRODUCED",
+    "artifact": "results\\sensitivity\\cap_floor_theta_0.50_exact_per_config.json"
+  },
+  {
+    "dimension": "satisfaction floor theta=0.60",
+    "metric": "locked n / locked max / mean / p95 / max",
+    "claimed": [
+      4317,
+      1.156,
+      1.061,
+      1.2092,
+      1.6404
+    ],
+    "recomputed": [
+      4317,
+      1.1559975237202675,
+      1.0610139253185136,
+      1.2092248767265186,
+      1.640417865205884
+    ],
+    "verdict": "REPRODUCED",
+    "artifact": "results\\sensitivity\\cap_floor_theta_0.60_exact_per_config.json"
+  },
+  {
+    "dimension": "satisfaction floor theta=0.60",
+    "metric": "violations of 1/theta on locked layer",
+    "claimed": 0,
+    "recomputed": 0,
+    "verdict": "REPRODUCED",
+    "artifact": "results\\sensitivity\\cap_floor_theta_0.60_exact_per_config.json"
+  },
+  {
+    "dimension": "satisfaction floor theta=0.70",
+    "metric": "locked n / locked max / mean / p95 / max",
+    "claimed": [
+      4298,
+      1.12,
+      1.068,
+      1.2167,
+      1.6017
+    ],
+    "recomputed": [
+      4298,
+      1.119988548198708,
+      1.0679645611288595,
+      1.2166575027286357,
+      1.6016816235263536
+    ],
+    "verdict": "REPRODUCED",
+    "artifact": "results\\sensitivity\\cap_floor_theta_0.70_exact_per_config.json"
+  },
+  {
+    "dimension": "satisfaction floor theta=0.70",
+    "metric": "violations of 1/theta on locked layer",
+    "claimed": 0,
+    "recomputed": 0,
+    "verdict": "REPRODUCED",
+    "artifact": "results\\sensitivity\\cap_floor_theta_0.70_exact_per_config.json"
+  },
+  {
+    "dimension": "cluster-radius factor 0.8",
+    "metric": "mean PoA",
+    "claimed": 1.0688,
+    "recomputed": 1.0688,
+    "verdict": "REPRODUCED",
+    "artifact": "results\\main\\cluster_radius_sensitivity_summary.json"
+  },
+  {
+    "dimension": "cluster-radius factor 1.0",
+    "metric": "mean PoA",
+    "claimed": 1.0376,
+    "recomputed": 1.0376,
+    "verdict": "REPRODUCED",
+    "artifact": "results\\main\\cluster_radius_sensitivity_summary.json"
+  },
+  {
+    "dimension": "cluster-radius factor 1.2",
+    "metric": "mean PoA",
+    "claimed": 1.0267,
+    "recomputed": 1.0267,
+    "verdict": "REPRODUCED",
+    "artifact": "results\\main\\cluster_radius_sensitivity_summary.json"
+  },
+  {
+    "dimension": "cluster-radius factor (all)",
+    "metric": "worst single-city PoA",
+    "claimed": 1.1764,
+    "recomputed": 1.1764,
+    "verdict": "REPRODUCED",
+    "artifact": "results\\main\\cluster_radius_sensitivity_summary.json"
+  },
+  {
+    "dimension": "ladder refinement K=5",
+    "metric": "mean/median/p95/max/tie-share/locked-max",
+    "claimed": [
+      1.061,
+      1.0372,
+      1.2092,
+      1.6404,
+      0.178,
+      1.156
+    ],
+    "recomputed": [
+      1.061,
+      1.0372,
+      1.2092,
+      1.6404,
+      0.1784,
+      1.156
+    ],
+    "verdict": "REPRODUCED",
+    "artifact": "results\\sensitivity\\ladder_K5_per_config.json"
+  },
+  {
+    "dimension": "ladder refinement K=10",
+    "metric": "mean PoA",
+    "claimed": null,
+    "recomputed": 1.0555,
+    "verdict": "REPRODUCED (supplementary)",
+    "artifact": "results\\sensitivity\\ladder_K10_per_config.json"
+  },
+  {
+    "dimension": "ladder refinement K=20",
+    "metric": "mean PoA",
+    "claimed": null,
+    "recomputed": 1.058,
+    "verdict": "REPRODUCED (supplementary)",
+    "artifact": "results\\sensitivity\\ladder_K20_per_config.json"
+  },
+  {
+    "dimension": "ladder refinement K=50",
+    "metric": "mean PoA",
+    "claimed": null,
+    "recomputed": 1.0583,
+    "verdict": "REPRODUCED (supplementary)",
+    "artifact": "results\\sensitivity\\ladder_K50_per_config.json"
+  },
+  {
+    "dimension": "ladder refinement K=100",
+    "metric": "mean PoA",
+    "claimed": null,
+    "recomputed": 1.0585,
+    "verdict": "REPRODUCED (supplementary)",
+    "artifact": "results\\sensitivity\\ladder_K100_per_config.json"
+  },
+  {
+    "dimension": "enumeration connectivity (simple, T11)",
+    "metric": "beta_connectivity as printed (0.152)",
+    "claimed": 0.152,
+    "recomputed": 0.165467,
+    "verdict": "TEXT FIX NEEDED",
+    "artifact": "results\\tables\\T11_enum_connectivity_reg.json"
+  },
+  {
+    "dimension": "enumeration regression simple (M1)",
+    "metric": "R2",
+    "claimed": 0.006878,
+    "recomputed": 0.0069,
+    "verdict": "REPRODUCED",
+    "artifact": "results\\tables\\T15_enum_regression_ladder.json"
+  },
+  {
+    "dimension": "enumeration regression lock only (M2)",
+    "metric": "R2",
+    "claimed": 0.1944,
+    "recomputed": 0.1944,
+    "verdict": "REPRODUCED",
+    "artifact": "results\\tables\\T15_enum_regression_ladder.json"
+  },
+  {
+    "dimension": "enumeration regression lock+conn (M3)",
+    "metric": "R2",
+    "claimed": 0.2002,
+    "recomputed": 0.2002,
+    "verdict": "REPRODUCED",
+    "artifact": "results\\tables\\T15_enum_regression_ladder.json"
+  },
+  {
+    "dimension": "enumeration regression lock+conn+log n_sta (M4)",
+    "metric": "R2",
+    "claimed": 0.204,
+    "recomputed": 0.204,
+    "verdict": "REPRODUCED",
+    "artifact": "results\\tables\\T15_enum_regression_ladder.json"
+  },
+  {
+    "dimension": "enumeration connectivity (simple)",
+    "metric": "beta_connectivity",
+    "claimed": null,
+    "recomputed": 0.1655,
+    "verdict": "REPRODUCED",
+    "artifact": "results\\tables\\T15_enum_regression_ladder.json"
+  },
+  {
+    "dimension": "enumeration connectivity (controlled (M3))",
+    "metric": "beta_connectivity",
+    "claimed": null,
+    "recomputed": 0.1512,
+    "verdict": "REPRODUCED",
+    "artifact": "results\\tables\\T15_enum_regression_ladder.json"
+  },
+  {
+    "dimension": "capacity sizing rule A (36 wan/station)",
+    "metric": "mean share of large stations (arithmetic)",
+    "claimed": null,
+    "recomputed": 0.655,
+    "verdict": "MECHANISM ONLY (PoA value legacy)",
+    "artifact": "data\\processed\\21city_parameters.json"
+  },
+  {
+    "dimension": "capacity sizing rule B (36 wan/station)",
+    "metric": "mean share of large stations (arithmetic)",
+    "claimed": null,
+    "recomputed": 0.3209,
+    "verdict": "MECHANISM ONLY (PoA value legacy)",
+    "artifact": "data\\processed\\21city_parameters.json"
+  },
+  {
+    "dimension": "capacity sizing rule C (36 wan/station)",
+    "metric": "mean share of large stations (arithmetic)",
+    "claimed": null,
+    "recomputed": 0.5049,
+    "verdict": "MECHANISM ONLY (PoA value legacy)",
+    "artifact": "data\\processed\\21city_parameters.json"
+  },
+  {
+    "dimension": "per-station budget 25 wan (rule A)",
+    "metric": "mean share of large stations (arithmetic)",
+    "claimed": null,
+    "recomputed": 0.2442,
+    "verdict": "MECHANISM ONLY (PoA value legacy)",
+    "artifact": "data\\processed\\21city_parameters.json"
+  },
+  {
+    "dimension": "per-station budget 30 wan (rule A)",
+    "metric": "mean share of large stations (arithmetic)",
+    "claimed": null,
+    "recomputed": 0.4327,
+    "verdict": "MECHANISM ONLY (PoA value legacy)",
+    "artifact": "data\\processed\\21city_parameters.json"
+  },
+  {
+    "dimension": "per-station budget 36 wan (rule A)",
+    "metric": "mean share of large stations (arithmetic)",
+    "claimed": null,
+    "recomputed": 0.655,
+    "verdict": "MECHANISM ONLY (PoA value legacy)",
+    "artifact": "data\\processed\\21city_parameters.json"
+  },
+  {
+    "dimension": "per-station budget 40 wan (rule A)",
+    "metric": "mean share of large stations (arithmetic)",
+    "claimed": null,
+    "recomputed": 0.655,
+    "verdict": "MECHANISM ONLY (PoA value legacy)",
+    "artifact": "data\\processed\\21city_parameters.json"
+  },
+  {
+    "dimension": "budget saturation 36 vs 40 wan",
+    "metric": "allocations identical?",
+    "claimed": "identical (stated in Appendix C)",
+    "recomputed": "identical",
+    "verdict": "REPRODUCED",
+    "artifact": "data\\processed\\21city_parameters.json"
+  },
+  {
+    "dimension": "satisfaction weights alpha/beta/gamma",
+    "metric": "swept?",
+    "claimed": "fixed by specification 0.2/0.3/0.5",
+    "recomputed": "not swept (externally given)",
+    "verdict": "NOT APPLICABLE",
+    "artifact": "constants.py"
+  }
+]

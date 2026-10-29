@@ -1,0 +1,32 @@
+dimension,metric,claimed,recomputed,verdict,artifact
+satisfaction floor theta=0.50,locked n / locked max / mean / p95 / max,"(4416, 1.2174, 1.0502, 1.1812, 1.8798)","(4416, 1.2173982162853525, 1.050228227366784, 1.1811676598952197, 1.879757874089389)",REPRODUCED,results\sensitivity\cap_floor_theta_0.50_exact_per_config.json
+satisfaction floor theta=0.50,violations of 1/theta on locked layer,0,0,REPRODUCED,results\sensitivity\cap_floor_theta_0.50_exact_per_config.json
+satisfaction floor theta=0.60,locked n / locked max / mean / p95 / max,"(4317, 1.156, 1.061, 1.2092, 1.6404)","(4317, 1.1559975237202675, 1.0610139253185136, 1.2092248767265186, 1.640417865205884)",REPRODUCED,results\sensitivity\cap_floor_theta_0.60_exact_per_config.json
+satisfaction floor theta=0.60,violations of 1/theta on locked layer,0,0,REPRODUCED,results\sensitivity\cap_floor_theta_0.60_exact_per_config.json
+satisfaction floor theta=0.70,locked n / locked max / mean / p95 / max,"(4298, 1.12, 1.068, 1.2167, 1.6017)","(4298, 1.119988548198708, 1.0679645611288595, 1.2166575027286357, 1.6016816235263536)",REPRODUCED,results\sensitivity\cap_floor_theta_0.70_exact_per_config.json
+satisfaction floor theta=0.70,violations of 1/theta on locked layer,0,0,REPRODUCED,results\sensitivity\cap_floor_theta_0.70_exact_per_config.json
+cluster-radius factor 0.8,mean PoA,1.0688,1.0688,REPRODUCED,results\main\cluster_radius_sensitivity_summary.json
+cluster-radius factor 1.0,mean PoA,1.0376,1.0376,REPRODUCED,results\main\cluster_radius_sensitivity_summary.json
+cluster-radius factor 1.2,mean PoA,1.0267,1.0267,REPRODUCED,results\main\cluster_radius_sensitivity_summary.json
+cluster-radius factor (all),worst single-city PoA,1.1764,1.1764,REPRODUCED,results\main\cluster_radius_sensitivity_summary.json
+ladder refinement K=5,mean/median/p95/max/tie-share/locked-max,"(1.061, 1.0372, 1.2092, 1.6404, 0.178, 1.156)","(1.061, 1.0372, 1.2092, 1.6404, 0.1784, 1.156)",REPRODUCED,results\sensitivity\ladder_K5_per_config.json
+ladder refinement K=10,mean PoA,,1.0555,REPRODUCED (supplementary),results\sensitivity\ladder_K10_per_config.json
+ladder refinement K=20,mean PoA,,1.058,REPRODUCED (supplementary),results\sensitivity\ladder_K20_per_config.json
+ladder refinement K=50,mean PoA,,1.0583,REPRODUCED (supplementary),results\sensitivity\ladder_K50_per_config.json
+ladder refinement K=100,mean PoA,,1.0585,REPRODUCED (supplementary),results\sensitivity\ladder_K100_per_config.json
+"enumeration connectivity (simple, T11)",beta_connectivity as printed (0.152),0.152,0.165467,TEXT FIX NEEDED,results\tables\T11_enum_connectivity_reg.json
+enumeration regression simple (M1),R2,0.006878,0.0069,REPRODUCED,results\tables\T15_enum_regression_ladder.json
+enumeration regression lock only (M2),R2,0.1944,0.1944,REPRODUCED,results\tables\T15_enum_regression_ladder.json
+enumeration regression lock+conn (M3),R2,0.2002,0.2002,REPRODUCED,results\tables\T15_enum_regression_ladder.json
+enumeration regression lock+conn+log n_sta (M4),R2,0.204,0.204,REPRODUCED,results\tables\T15_enum_regression_ladder.json
+enumeration connectivity (simple),beta_connectivity,,0.1655,REPRODUCED,results\tables\T15_enum_regression_ladder.json
+enumeration connectivity (controlled (M3)),beta_connectivity,,0.1512,REPRODUCED,results\tables\T15_enum_regression_ladder.json
+capacity sizing rule A (36 wan/station),mean share of large stations (arithmetic),,0.655,MECHANISM ONLY (PoA value legacy),data\processed\21city_parameters.json
+capacity sizing rule B (36 wan/station),mean share of large stations (arithmetic),,0.3209,MECHANISM ONLY (PoA value legacy),data\processed\21city_parameters.json
+capacity sizing rule C (36 wan/station),mean share of large stations (arithmetic),,0.5049,MECHANISM ONLY (PoA value legacy),data\processed\21city_parameters.json
+per-station budget 25 wan (rule A),mean share of large stations (arithmetic),,0.2442,MECHANISM ONLY (PoA value legacy),data\processed\21city_parameters.json
+per-station budget 30 wan (rule A),mean share of large stations (arithmetic),,0.4327,MECHANISM ONLY (PoA value legacy),data\processed\21city_parameters.json
+per-station budget 36 wan (rule A),mean share of large stations (arithmetic),,0.655,MECHANISM ONLY (PoA value legacy),data\processed\21city_parameters.json
+per-station budget 40 wan (rule A),mean share of large stations (arithmetic),,0.655,MECHANISM ONLY (PoA value legacy),data\processed\21city_parameters.json
+budget saturation 36 vs 40 wan,allocations identical?,identical (stated in Appendix C),identical,REPRODUCED,data\processed\21city_parameters.json
+satisfaction weights alpha/beta/gamma,swept?,fixed by specification 0.2/0.3/0.5,not swept (externally given),NOT APPLICABLE,constants.py

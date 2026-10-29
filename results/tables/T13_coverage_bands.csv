@@ -1,0 +1,4 @@
+band,n_cities,poa_mean,poa_median,poa_min,poa_max,cov_mean,delta_cov_mean,delta_s2_mean,n_cov_aligned,cities
+Low (<20%),4,1.0074,1.0,1.0,1.0295,0.1433,0.0012,0.0023,3,Kunming;Dongguan;Shenzhen;Foshan
+Medium (20-35%),11,1.0324,1.0351,1.0021,1.065,0.2851,0.006,0.0147,5,Xi'an;Qingdao;Shenyang;Dalian;Harbin;Jinan;Guangzhou;Nanjing;Tianjin;Hangzhou;Zhengzhou
+High (>=35%),6,1.0674,1.0684,1.0513,1.0791,0.4021,0.0107,0.0477,0,Beijing;Chengdu;Changsha;Shanghai;Wuhan;Chongqing
