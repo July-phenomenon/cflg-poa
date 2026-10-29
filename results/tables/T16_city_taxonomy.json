@@ -1,0 +1,101 @@
+{
+  "features": [
+    "PoA",
+    "milp_cov",
+    "n_stations",
+    "delta_cov",
+    "share_S1",
+    "share_cov"
+  ],
+  "standardized": true,
+  "method": "k-means++ (30 restarts, 200 iters), k chosen by silhouette",
+  "selected_k": 2,
+  "silhouette": 0.39319216522922595,
+  "cluster_assignment": {
+    "Beijing": 0,
+    "Changsha": 0,
+    "Chengdu": 0,
+    "Chongqing": 0,
+    "Dalian": 0,
+    "Hangzhou": 0,
+    "Harbin": 0,
+    "Qingdao": 0,
+    "Shanghai": 0,
+    "Tianjin": 0,
+    "Wuhan": 0,
+    "Zhengzhou": 0,
+    "Dongguan": 1,
+    "Foshan": 1,
+    "Guangzhou": 1,
+    "Jinan": 1,
+    "Kunming": 1,
+    "Nanjing": 1,
+    "Shenyang": 1,
+    "Shenzhen": 1,
+    "Xi'an": 1
+  },
+  "profiles": [
+    {
+      "cluster": 0,
+      "n_cities": 12,
+      "members": [
+        "Beijing",
+        "Changsha",
+        "Chengdu",
+        "Chongqing",
+        "Dalian",
+        "Hangzhou",
+        "Harbin",
+        "Qingdao",
+        "Shanghai",
+        "Tianjin",
+        "Wuhan",
+        "Zhengzhou"
+      ],
+      "poa_mean": 1.0574,
+      "poa_min": 1.0351,
+      "poa_max": 1.0791,
+      "cov_mean": 0.34815816666666666,
+      "n_sta_mean": 79.25,
+      "delta_cov_mean": 0.0108435,
+      "share_S1_mean": 0.23045000000000002,
+      "share_cov_mean": 0.355475,
+      "frac_delta_cov_zero": 0.0,
+      "name": "assignment-driven mature",
+      "drivers": [
+        "medium coverage -> transition zone",
+        "decentralization also erodes coverage (delta_cov>0): both assignment and coverage channels active",
+        "large network scale"
+      ]
+    },
+    {
+      "cluster": 1,
+      "n_cities": 9,
+      "members": [
+        "Dongguan",
+        "Foshan",
+        "Guangzhou",
+        "Jinan",
+        "Kunming",
+        "Nanjing",
+        "Shenyang",
+        "Shenzhen",
+        "Xi'an"
+      ],
+      "poa_mean": 1.0112444444444444,
+      "poa_min": 1.0,
+      "poa_max": 1.0324,
+      "cov_mean": 0.21604633333333334,
+      "n_sta_mean": 27.77777777777778,
+      "delta_cov_mean": 0.0005167777777777778,
+      "share_S1_mean": 0.004155555555555555,
+      "share_cov_mean": 0.04697777777777778,
+      "frac_delta_cov_zero": 0.8888888888888888,
+      "name": "floor-saturated scarce",
+      "drivers": [
+        "medium coverage -> transition zone",
+        "decentralization does NOT change coverage (delta_cov=0): the whole gap is assignment-only"
+      ]
+    }
+  ]
+}
