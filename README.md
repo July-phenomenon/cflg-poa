@@ -66,7 +66,7 @@ python code/03_experiments/exp1_regression.py                              # Tab
 python code/04_sensitivity/cap_floor_sensitivity.py --exact-phase2 ...     # theta sweep
 python code/05_figures_tables/export_exact_figure_inputs.py                # figure inputs
 python code/05_figures_tables/make_figures_paper.py                        # the 4 figures + GA
-python tests/verify_paper_numbers.py                                       # 102-number audit
+python tests/verify_paper_numbers.py                                       # 109-number audit
 ```
 
 `tests/verify_paper_numbers.py` recomputes every number quoted in the manuscript
@@ -204,8 +204,9 @@ that can and cannot be bit-reproduced are in
   a 1e-9 relative gap, and each solution is re-verified in plain NumPy
   (capacity, coverage lock, staircase consistency) before it enters a result
   file. No PoA is a lower bound.
-* **Audited.** `tests/verify_paper_numbers.py` recomputes 102 published numbers
-  from the artefacts and fails loudly on any drift.
+* **Audited.** `tests/verify_paper_numbers.py` recomputes 109 published numbers
+  from the artefacts and fails loudly on any drift; its output is archived in
+  `results/tables/P0_paper_numbers.json`.
 * **No absolute paths.** All I/O goes through `CFLG_ROOT` / package-relative
   defaults.
 * **No hidden state.** Intermediate results are plain JSON/CSV, written
